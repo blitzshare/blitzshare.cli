@@ -36,11 +36,17 @@ func (m *mdnsNotifee) HandlePeerFound(pi peer.AddrInfo) {
 	m.h.Connect(m.ctx, pi)
 }
 
-const ID = "12D3KooWJ23BYF9jBM2qSoo49fizpevGwdf7anVfHn2L48FodGSA"
-const IP = "127.0.0.1" // "172.17.0.2" //
 const pubsubTopic = "/libp2p/example/chat/1.0.0"
 
+//const ID = "12D3KooWRpY4qV9RbCiLdG6rWbyFu3ScdvksrSknyxCq5PPcQzv6"
+//const IP = "172.17.0.2"
+
 func main() {
+	argsWithoutProg := os.Args[1:]
+	ID := argsWithoutProg[0]
+	IP := argsWithoutProg[1]
+	fmt.Printf("ID [%s]", ID)
+	fmt.Printf("IP [%s]", IP)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 

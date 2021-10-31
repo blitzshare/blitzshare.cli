@@ -13,7 +13,7 @@ start:
 	go run  app/*.go
 
 build:
-	GIN_MODE=release go build -o entrypoint app/main.go
+	GIN_MODE=release go build -o p2p-client app/main.go
 
 build-docker:
 	docker build -t blitzshare.bootstrap.node .
