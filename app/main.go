@@ -5,6 +5,13 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
+	math "math"
+	"os"
+	"os/signal"
+	"strings"
+	"syscall"
+	"time"
+
 	"github.com/gogo/protobuf/proto"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
@@ -19,12 +26,6 @@ import (
 	"github.com/libp2p/go-tcp-transport"
 	ws "github.com/libp2p/go-ws-transport"
 	"github.com/multiformats/go-multiaddr"
-	math "math"
-	"os"
-	"os/signal"
-	"strings"
-	"syscall"
-	"time"
 )
 
 type mdnsNotifee struct {
@@ -43,8 +44,9 @@ const pubsubTopic = "/libp2p/example/chat/1.0.0"
 
 func main() {
 	argsWithoutProg := os.Args[1:]
-	ID := argsWithoutProg[0]
-	IP := argsWithoutProg[1]
+	IP := argsWithoutProg[0]
+	ID := argsWithoutProg[1]
+
 	fmt.Printf("ID [%s]", ID)
 	fmt.Printf("IP [%s]", IP)
 	ctx, cancel := context.WithCancel(context.Background())
