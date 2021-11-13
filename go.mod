@@ -11,7 +11,7 @@ require (
 	github.com/libp2p/go-libp2p-mplex v0.4.1
 	github.com/libp2p/go-libp2p-pubsub v0.5.3
 	github.com/libp2p/go-libp2p-tls v0.2.0
-	github.com/libp2p/go-libp2p-yamux v0.5.4
+	github.com/libp2p/go-libp2p-yamux v0.5.4 // indirect
 	github.com/libp2p/go-tcp-transport v0.2.8
 	github.com/libp2p/go-ws-transport v0.5.0
 	github.com/multiformats/go-multiaddr v0.4.0
@@ -19,6 +19,11 @@ require (
 	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect; indirec
+)
+
+require (
+	github.com/sirupsen/logrus v1.8.1
+	github.com/tjarratt/babble v0.0.0-20210505082055-cbca2a4833c1
 )
 
 require (
