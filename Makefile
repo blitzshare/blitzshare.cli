@@ -10,7 +10,7 @@ fix-format:
 	goimports -w app/ pkg/ cmd/ mocks/ testhelpers
 
 start:
-	go run  app/*.go
+	go run cmd/main.go
 
 build:
 	GIN_MODE=release go build -o p2p-client app/main.go
