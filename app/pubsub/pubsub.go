@@ -42,7 +42,6 @@ const pubsubTopic = "/chat/1.0.0" // "test-chat-topic"
 var MyId string
 
 func StartPubSub() {
-
 	argsWithoutProg := os.Args[1:]
 	sender := argsWithoutProg[0]
 	// ID := argsWithoutProg[1]
