@@ -4,11 +4,17 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	log "github.com/sirupsen/logrus"
+	"io/ioutil"
 	"net/http"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const BASE_CONFIG_API_URL = "http://0.0.0.0"
+
+type PeerAddress struct {
+	MultiAddr string `json:"multiAddr"`
+}
 
 func RegisterAsPeer(multiAddr string, oneTimePass string) bool {
 	body, err := json.Marshal(map[string]string{
@@ -23,6 +29,22 @@ func RegisterAsPeer(multiAddr string, oneTimePass string) bool {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Infoln("RegisterAsPeer", resp.Body, resp.Status)
 	return resp.Status == "200 OK"
+}
+
+func GetPeerAddr(oneTimePass *string) *PeerAddress {
+	url := fmt.Sprintf("%s/p2p/registry/%s", BASE_CONFIG_API_URL, *oneTimePass)
+	resp, err := http.Get(url)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	peerAddress := PeerAddress{}
+	err = json.Unmarshal(body, &peerAddress)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return &peerAddress
 }

@@ -2,11 +2,13 @@ package chat
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/tjarratt/babble"
 )
 
 func GenerateRandomWords() string {
 	babbler := babble.NewBabbler()
-	return fmt.Sprintf("%s-%s", babbler.Babble(), babbler.Babble())
+	str := fmt.Sprintf("%s-%s", babbler.Babble(), babbler.Babble())
+	return strings.ToLower(str)
 }

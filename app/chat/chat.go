@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/chat/services"
 	"os"
+	"strings"
+
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/chat/services"
 
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
@@ -70,19 +72,42 @@ func StartPeer(config *BootstrapP2pConfig) host.Host {
 	}
 	h.SetStreamHandler(Protocol, handleStream)
 	multiAddr := fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%s \n", GetPort(h), h.ID().Pretty())
-	services.RegisterAsPeer(multiAddr, words)
-	log.Printf("Connect Peer: go run ./cmd/*.go -d /ip4/127.0.0.1/tcp/%v/p2p/%s \n", GetPort(h), h.ID().Pretty())
+	resitred := services.RegisterAsPeer(multiAddr, words)
+	if resitred {
+		log.Infoln("peer resitred as", words)
+	}
+	log.Printf("Connect Peer: go run ./cmd/*.go -p %s\n", words)
+	// log.Printf("Connect Peer: go run ./cmd/*.go -d /ip4/127.0.0.1/tcp/%v/p2p/%s \n", GetPort(h), h.ID().Pretty())
 	return h
 }
 
-func ConnectToPeer(dest *string, config *BootstrapP2pConfig) host.Host {
+func ConnectToPeerPass(c *BootstrapP2pConfig, pass *string) host.Host {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	h, err := connectToBootsrapNode(config)
+	h, err := connectToBootsrapNode(c)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	rw, err := connectToPeer(ctx, h, *dest)
+	address := services.GetPeerAddr(pass)
+	rw, err := connectToPeer(ctx, h, &address.MultiAddr)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Infoln("ConnectToPeerAddress", address)
+	go writeData(rw)
+	go readData(rw)
+	return h
+}
+
+func ConnectToPeerAddress(c *BootstrapP2pConfig, address *string) host.Host {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	log.Infoln("ConnectToPeerAddress", address)
+	h, err := connectToBootsrapNode(c)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	rw, err := connectToPeer(ctx, h, address)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -93,7 +118,7 @@ func ConnectToPeer(dest *string, config *BootstrapP2pConfig) host.Host {
 }
 
 func connectToBootsrapNode(c *BootstrapP2pConfig) (host.Host, error) {
-	ctx, _ := context.WithCancel(context.Background())
+	ctx := context.Background()
 	host, err := libp2p.New(ctx,
 		// TODO libp2p.Security(tls.ID, tls.New),
 		libp2p.EnableRelay(),
@@ -114,8 +139,11 @@ func connectToBootsrapNode(c *BootstrapP2pConfig) (host.Host, error) {
 	return host, err
 }
 
-func connectToPeer(ctx context.Context, h host.Host, destination string) (*bufio.ReadWriter, error) {
-	maddr, err := multiaddr.NewMultiaddr(destination)
+func connectToPeer(ctx context.Context, h host.Host, destination *string) (*bufio.ReadWriter, error) {
+	// TODO: sanatize string on the backend
+	addr := strings.Replace(*destination, "\n", "", -1)
+	addr = strings.Replace(addr, " ", "", -1)
+	maddr, err := multiaddr.NewMultiaddr(addr)
 	if err != nil {
 		log.Println(err)
 		return nil, err
