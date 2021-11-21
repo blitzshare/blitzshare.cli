@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/chat/services"
 
@@ -140,10 +139,7 @@ func connectToBootsrapNode(c *BootstrapP2pConfig) (host.Host, error) {
 }
 
 func connectToPeer(ctx context.Context, h host.Host, destination *string) (*bufio.ReadWriter, error) {
-	// TODO: sanatize string on the backend
-	addr := strings.Replace(*destination, "\n", "", -1)
-	addr = strings.Replace(addr, " ", "", -1)
-	maddr, err := multiaddr.NewMultiaddr(addr)
+	maddr, err := multiaddr.NewMultiaddr(*destination)
 	if err != nil {
 		log.Println(err)
 		return nil, err
