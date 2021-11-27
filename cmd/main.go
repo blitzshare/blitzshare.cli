@@ -6,26 +6,39 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/chat"
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app"
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/dependencies"
 	"github.com/libp2p/go-libp2p-core/host"
+	log "github.com/sirupsen/logrus"
 )
 
-const IP = "0.0.0.0"
-const ID = "12D3KooWAZK68L58pAoqQfCtRFUPU2YE4A6Ang8D44QEHqnJxWz5"
-const PORT = 63785
+func initLog() {
+	log.SetFormatter(&log.JSONFormatter{})
+	log.SetOutput(os.Stdout)
+}
 
 func main() {
+	// initLog()
 	dest := flag.String("d", "", "Destination multiaddr string")
 	pass := flag.String("p", "", "One time pass id of connection peer")
 	flag.Parse()
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("failed to load config %v\n", err)
+	}
+	deps, err := dependencies.NewDependencies(cfg)
+	if err != nil {
+		log.Fatalf("failed to load dependencies %v\n", err)
+	}
+
 	var host host.Host
-	conf := &chat.BootstrapP2pConfig{Port: PORT, Ip: IP, NodeId: ID}
 	if *dest != "" {
-		host = chat.ConnectToPeerAddress(conf, dest)
+		host = app.ConnectToPeerAddress(deps, dest)
 	} else if *pass != "" {
-		host = chat.ConnectToPeerPass(conf, pass)
+		host = app.ConnectToPeerPass(deps, pass)
 	} else {
-		host = chat.StartPeer(conf)
+		host = app.StartPeer(deps)
 	}
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT)

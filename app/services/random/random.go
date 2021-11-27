@@ -1,4 +1,4 @@
-package chat
+package random
 
 import (
 	"fmt"
@@ -10,5 +10,5 @@ import (
 func GenerateRandomWords() string {
 	babbler := babble.NewBabbler()
 	str := fmt.Sprintf("%s-%s", babbler.Babble(), babbler.Babble())
-	return strings.ToLower(str)
+	return strings.ToLower(strings.Replace(str, "'", "", -1))
 }

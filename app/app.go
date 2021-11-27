@@ -1,4 +1,4 @@
-package chat
+package app
 
 import (
 	"bufio"
@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/chat/services"
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/dependencies"
+	net "github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/net"
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/random"
 
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
@@ -56,38 +58,30 @@ func writeData(rw *bufio.ReadWriter) {
 	}
 }
 
-type BootstrapP2pConfig struct {
-	Ip     string
-	NodeId string
-	Port   int
-}
-
-func StartPeer(config *BootstrapP2pConfig) host.Host {
-	words := GenerateRandomWords()
-	log.Infoln(words)
-	h, err := connectToBootsrapNode(config)
+func StartPeer(dep *dependencies.Dependencies) host.Host {
+	words := random.GenerateRandomWords()
+	h, err := connectToBootsrapNode(dep)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	h.SetStreamHandler(Protocol, handleStream)
-	multiAddr := fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%s \n", GetPort(h), h.ID().Pretty())
-	resitred := services.RegisterAsPeer(multiAddr, words)
+	multiAddr := fmt.Sprintf("/ip4/0.0.0.0/tcp/%v/p2p/%s \n", net.GetPort(h), h.ID().Pretty())
+	resitred := dep.BlitzshareApi.RegisterAsPeer(multiAddr, words)
 	if resitred {
-		log.Infoln("peer resitred as", words)
+		log.Infoln("Peer resitred as", words)
 	}
-	log.Printf("Connect Peer: go run ./cmd/*.go -p %s\n", words)
-	// log.Printf("Connect Peer: go run ./cmd/*.go -d /ip4/127.0.0.1/tcp/%v/p2p/%s \n", GetPort(h), h.ID().Pretty())
+	log.Printf("run: go run ./cmd/*.go -p %s\n", words)
 	return h
 }
 
-func ConnectToPeerPass(c *BootstrapP2pConfig, pass *string) host.Host {
+func ConnectToPeerPass(dep *dependencies.Dependencies, pass *string) host.Host {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	h, err := connectToBootsrapNode(c)
+	h, err := connectToBootsrapNode(dep)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	address := services.GetPeerAddr(pass)
+	address := dep.BlitzshareApi.GetPeerAddr(pass)
 	rw, err := connectToPeer(ctx, h, &address.MultiAddr)
 	if err != nil {
 		log.Fatalln(err)
@@ -98,11 +92,11 @@ func ConnectToPeerPass(c *BootstrapP2pConfig, pass *string) host.Host {
 	return h
 }
 
-func ConnectToPeerAddress(c *BootstrapP2pConfig, address *string) host.Host {
+func ConnectToPeerAddress(dep *dependencies.Dependencies, address *string) host.Host {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	log.Infoln("ConnectToPeerAddress", address)
-	h, err := connectToBootsrapNode(c)
+	h, err := connectToBootsrapNode(dep)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -116,13 +110,13 @@ func ConnectToPeerAddress(c *BootstrapP2pConfig, address *string) host.Host {
 	return h
 }
 
-func connectToBootsrapNode(c *BootstrapP2pConfig) (host.Host, error) {
+func connectToBootsrapNode(dep *dependencies.Dependencies) (host.Host, error) {
 	ctx := context.Background()
 	host, err := libp2p.New(ctx,
 		// TODO libp2p.Security(tls.ID, tls.New),
 		libp2p.EnableRelay(),
 	)
-	targetAddr, err := multiaddr.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d/p2p/%s", c.Ip, c.Port, c.NodeId))
+	targetAddr, err := multiaddr.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d/p2p/%s", dep.Config.Settings.P2pBoostrapNodeIp, dep.Config.Settings.P2pBoostrapNodePort, dep.Config.Settings.P2pBoostrapNodeId))
 	if err != nil {
 		log.Panicln(err)
 	}

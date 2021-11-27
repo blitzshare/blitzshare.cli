@@ -4,24 +4,26 @@ go 1.17
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/gogo/protobuf v1.3.2
+	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/libp2p/go-libp2p v0.15.1
 	github.com/libp2p/go-libp2p-core v0.9.0
-	github.com/libp2p/go-libp2p-kad-dht v0.15.0
-	github.com/libp2p/go-libp2p-mplex v0.4.1
-	github.com/libp2p/go-libp2p-pubsub v0.5.3
-	github.com/libp2p/go-libp2p-tls v0.2.0
+	github.com/libp2p/go-libp2p-kad-dht v0.15.0 // indirect
+	github.com/libp2p/go-libp2p-mplex v0.4.1 // indirect
+	github.com/libp2p/go-libp2p-pubsub v0.5.3 // indirect
+	github.com/libp2p/go-libp2p-tls v0.2.0 // indirect
 	github.com/libp2p/go-libp2p-yamux v0.5.4 // indirect
-	github.com/libp2p/go-tcp-transport v0.2.8
-	github.com/libp2p/go-ws-transport v0.5.0
+	github.com/libp2p/go-tcp-transport v0.2.8 // indirect
+	github.com/libp2p/go-ws-transport v0.5.0 // indirect
 	github.com/multiformats/go-multiaddr v0.4.0
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.1.1 // indirect
-	github.com/stretchr/testify v1.7.0 // indirect
+	github.com/stretchr/testify v1.7.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect; indirec
 )
 
 require (
+	github.com/joho/godotenv v1.4.0
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/tjarratt/babble v0.0.0-20210505082055-cbca2a4833c1
 )
