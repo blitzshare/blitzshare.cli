@@ -65,7 +65,7 @@ func StartPeer(dep *dependencies.Dependencies) host.Host {
 		log.Fatalln(err)
 	}
 	h.SetStreamHandler(Protocol, handleStream)
-	multiAddr := fmt.Sprintf("/ip4/0.0.0.0/tcp/%v/p2p/%s \n", net.GetPort(h), h.ID().Pretty())
+	multiAddr := fmt.Sprintf("/ip4/%s/tcp/%v/p2p/%s \n", dep.Config.LocalP2pPeerIp, net.GetPort(h), h.ID().Pretty())
 	resitred := dep.BlitzshareApi.RegisterAsPeer(multiAddr, words)
 	if resitred {
 		log.Infoln("Peer resitred as", words)
@@ -116,7 +116,7 @@ func connectToBootsrapNode(dep *dependencies.Dependencies) (host.Host, error) {
 		// TODO libp2p.Security(tls.ID, tls.New),
 		libp2p.EnableRelay(),
 	)
-	targetAddr, err := multiaddr.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d/p2p/%s", dep.Config.Settings.P2pBoostrapNodeIp, dep.Config.Settings.P2pBoostrapNodePort, dep.Config.Settings.P2pBoostrapNodeId))
+	targetAddr, err := multiaddr.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d/p2p/%s", dep.Config.P2pBoostrapNodeIp, dep.Config.P2pBoostrapNodePort, dep.Config.P2pBoostrapNodeId))
 	if err != nil {
 		log.Panicln(err)
 	}

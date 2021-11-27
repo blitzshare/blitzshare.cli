@@ -13,8 +13,8 @@ func TestConfig(t *testing.T) {
 	cfg, err := config.Load()
 
 	assert.Nil(t, err, "Unable to log the config")
-	assert.Equal(t, "12D3KooWFsVgymCfHTvhECN3wmwE7kFmYTNg1n7F2CZ3iMqwt2TP", cfg.Settings.P2pBoostrapNodeId)
-	assert.Equal(t, "10.100.212.158", cfg.Settings.P2pBoostrapNodeIp)
+	assert.Equal(t, "12D3KooWFsVgymCfHTvhECN3wmwE7kFmYTNg1n7F2CZ3iMqwt2TP", cfg.P2pBoostrapNodeId)
+	assert.Equal(t, "10.100.212.158", cfg.P2pBoostrapNodeIp)
 
 	tearDown()
 }

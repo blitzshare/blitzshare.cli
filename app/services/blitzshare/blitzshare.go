@@ -29,7 +29,7 @@ type BlitzshareApiImpl struct {
 var BASE_URL string
 
 func New(config *cfg.AppConfig) *BlitzshareApiImpl {
-	BASE_URL = config.Settings.BlitzshareApiUrl
+	BASE_URL = config.BlitzshareApiUrl
 	return &BlitzshareApiImpl{}
 }
 
