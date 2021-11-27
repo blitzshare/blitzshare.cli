@@ -32,7 +32,7 @@ func main() {
 		log.Fatalf("failed to load dependencies %v\n", err)
 	}
 
-	var host host.Host
+	var host *host.Host
 	if *dest != "" {
 		host = app.ConnectToPeerAddress(deps, dest)
 	} else if *pass != "" {
@@ -44,7 +44,7 @@ func main() {
 	signal.Notify(stop, syscall.SIGINT)
 	select {
 	case <-stop:
-		host.Close()
+		(*host).Close()
 		os.Exit(0)
 	}
 }
