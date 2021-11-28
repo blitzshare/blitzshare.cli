@@ -12,6 +12,9 @@ fix-format:
 start:
 	go run cmd/main.go
 
+start-peer:
+	go run cmd/main.go --peer
+
 build:
 	GIN_MODE=release go build -o p2p-client app/main.go
 

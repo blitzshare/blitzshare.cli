@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services"
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/str"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,14 +16,13 @@ import (
 )
 
 func initLog() {
-	log.SetFormatter(&log.JSONFormatter{})
+	log.SetFormatter(&log.TextFormatter{})
 	log.SetOutput(os.Stdout)
 }
 
 func main() {
-	// initLog()
-	dest := flag.String("d", "", "Destination multiaddr string")
-	pass := flag.String("p", "", "One time pass id of connection peer")
+	initLog()
+	peer := flag.Bool("peer", false, "Connect to p2p peer")
 	flag.Parse()
 	cfg, err := config.Load()
 	if err != nil {
@@ -31,15 +32,16 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load dependencies %v\n", err)
 	}
-
 	var host *host.Host
-	if *dest != "" {
-		host = app.ConnectToPeerAddress(deps, dest)
-	} else if *pass != "" {
-		host = app.ConnectToPeerPass(deps, pass)
-	} else {
+	if *peer {
 		host = app.StartPeer(deps)
+	}else {
+		log.Println("Enter OTP:")
+		line := services.ReadStdInLine()
+		otp := str.SanatizeStr(*line)
+		host = app.ConnectToPeerPass(deps, &otp)
 	}
+	services.PrintLogo()
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT)
 	select {

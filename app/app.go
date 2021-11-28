@@ -65,13 +65,10 @@ func StartPeer(dep *dependencies.Dependencies) *host.Host {
 	})
 
 	multiAddr := fmt.Sprintf("/ip4/%s/tcp/%v/p2p/%s \n", dep.Config.LocalP2pPeerIp, net.GetPort(*h), (*h).ID().Pretty())
-	resitred := dep.BlitzshareApi.RegisterAsPeer(multiAddr, words)
-	if resitred {
-		log.Infoln("Peer resitred as", words)
-	}
+	dep.BlitzshareApi.RegisterAsPeer(multiAddr, words)
 	log.Printf("P2p Address: %s", multiAddr)
-	log.Printf("P2p OTP: [%s]", words)
-	log.Printf("run: go run ./cmd/*.go -p %s\n", words)
+	log.Printf("P2p OTP: %s", words)
+	//log.Printf("run: go run ./cmd/*.go -p %s\n", words)
 	return h
 }
 
@@ -81,11 +78,11 @@ func ConnectToPeerPass(dep *dependencies.Dependencies, pass *string) *host.Host 
 		log.Fatalln(err)
 	}
 	address := dep.BlitzshareApi.GetPeerAddr(pass)
-	log.Printf("[Connecting] P2p OTP: [%s]", *pass)
+	log.Printf("[Connecting] OTP: %s", *pass)
 
 	rw := connectToPeer(h, &address.MultiAddr)
 
-	log.Printf("[Connected] P2p Address: [%s]", address.MultiAddr)
+	log.Printf("[Connected] P2p Address: %s", address.MultiAddr)
 
 	go writeStreamFromStdin(rw)
 	go readFromStdinToStream(rw)
@@ -125,7 +122,7 @@ func connectToBootsrapNode(dep *dependencies.Dependencies) (*host.Host, error) {
 	if err != nil {
 		log.Panicln(err)
 	}
-	log.Printf("[Connected] [%s]", targetAddr)
+	log.Printf("[Connected] %s", targetAddr)
 
 	return &host, err
 }
