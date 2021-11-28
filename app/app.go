@@ -44,7 +44,6 @@ func readData(rw *bufio.ReadWriter) {
 
 func writeData(rw *bufio.ReadWriter) {
 	stdReader := bufio.NewReader(os.Stdin)
-
 	for {
 		fmt.Print("> ")
 		sendData, err := stdReader.ReadString('\n')
@@ -69,7 +68,6 @@ func StartPeer(dep *dependencies.Dependencies) *host.Host {
 	resitred := dep.BlitzshareApi.RegisterAsPeer(multiAddr, words)
 	if resitred {
 		log.Infoln("Peer resitred as", words)
-
 	}
 	log.Printf("P2p Address: %s", multiAddr)
 	log.Printf("P2p OTP: [%s]", words)
@@ -78,8 +76,6 @@ func StartPeer(dep *dependencies.Dependencies) *host.Host {
 }
 
 func ConnectToPeerPass(dep *dependencies.Dependencies, pass *string) *host.Host {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	h, err := connectToBootsrapNode(dep)
 	if err != nil {
 		log.Fatalln(err)
@@ -87,10 +83,7 @@ func ConnectToPeerPass(dep *dependencies.Dependencies, pass *string) *host.Host 
 	address := dep.BlitzshareApi.GetPeerAddr(pass)
 	log.Printf("[Connecting] P2p OTP: [%s]", *pass)
 
-	rw, err := connectToPeer(ctx, h, &address.MultiAddr)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	rw := connectToPeer(h, &address.MultiAddr)
 
 	log.Printf("[Connected] P2p Address: [%s]", address.MultiAddr)
 
@@ -100,17 +93,13 @@ func ConnectToPeerPass(dep *dependencies.Dependencies, pass *string) *host.Host 
 }
 
 func ConnectToPeerAddress(dep *dependencies.Dependencies, address *string) *host.Host {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	log.Infoln("ConnectToPeerAddress", address)
 	h, err := connectToBootsrapNode(dep)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	rw, err := connectToPeer(ctx, h, address)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	rw := connectToPeer(h, address)
+
 	go writeData(rw)
 	go readData(rw)
 
@@ -121,7 +110,7 @@ func connectToBootsrapNode(dep *dependencies.Dependencies) (*host.Host, error) {
 	log.Printf("[Connecting] P2p network")
 	ctx := context.Background()
 	host, err := libp2p.New(ctx,
-		// TODO libp2p.Security(tls.ID, tls.New),
+		//libp2p.Security(tls.ID, tls.New),
 		libp2p.EnableRelay(),
 	)
 	targetAddr, err := multiaddr.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d/p2p/%s", dep.Config.P2pBoostrapNodeIp, dep.Config.P2pBoostrapNodePort, dep.Config.P2pBoostrapNodeId))
@@ -137,27 +126,27 @@ func connectToBootsrapNode(dep *dependencies.Dependencies) (*host.Host, error) {
 		log.Panicln(err)
 	}
 	log.Printf("[Connected] [%s]", targetAddr)
+
 	return &host, err
 }
 
-func connectToPeer(ctx context.Context, h *host.Host, destination *string) (*bufio.ReadWriter, error) {
+func connectToPeer(h *host.Host, destination *string) *bufio.ReadWriter {
 	maddr, err := multiaddr.NewMultiaddr(*destination)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		log.Fatalln(err)
 	}
 	info, err := peer.AddrInfoFromP2pAddr(maddr)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		log.Fatalln(err)
 	}
-	// Add the destination's peer multiaddress in the peerstore.
 	(*h).Peerstore().AddAddrs(info.ID, info.Addrs, peerstore.PermanentAddrTTL)
 	s, err := (*h).NewStream(context.Background(), info.ID, Protocol)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		log.Fatalln(err)
 	}
 	rw := bufio.NewReadWriter(bufio.NewReader(s), bufio.NewWriter(s))
-	return rw, nil
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return rw
 }
