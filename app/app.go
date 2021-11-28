@@ -19,15 +19,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// TOD set protocol as random w
 const Protocol = "/blitzshare/1.0.0"
 
-func handleStream(s network.Stream) {
-	rw := bufio.NewReadWriter(bufio.NewReader(s), bufio.NewWriter(s))
-	go readData(rw)
-	go writeData(rw)
-}
-
-func readData(rw *bufio.ReadWriter) {
+func readFromStdinToStream(rw *bufio.ReadWriter) {
 	for {
 		str, _ := rw.ReadString('\n')
 
@@ -42,7 +37,7 @@ func readData(rw *bufio.ReadWriter) {
 	}
 }
 
-func writeData(rw *bufio.ReadWriter) {
+func writeStreamFromStdin(rw *bufio.ReadWriter) {
 	stdReader := bufio.NewReader(os.Stdin)
 	for {
 		fmt.Print("> ")
@@ -63,7 +58,12 @@ func StartPeer(dep *dependencies.Dependencies) *host.Host {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	(*h).SetStreamHandler(Protocol, handleStream)
+	(*h).SetStreamHandler(Protocol, func(s network.Stream) {
+		rw := bufio.NewReadWriter(bufio.NewReader(s), bufio.NewWriter(s))
+		go readFromStdinToStream(rw)
+		go writeStreamFromStdin(rw)
+	})
+
 	multiAddr := fmt.Sprintf("/ip4/%s/tcp/%v/p2p/%s \n", dep.Config.LocalP2pPeerIp, net.GetPort(*h), (*h).ID().Pretty())
 	resitred := dep.BlitzshareApi.RegisterAsPeer(multiAddr, words)
 	if resitred {
@@ -87,8 +87,8 @@ func ConnectToPeerPass(dep *dependencies.Dependencies, pass *string) *host.Host 
 
 	log.Printf("[Connected] P2p Address: [%s]", address.MultiAddr)
 
-	go writeData(rw)
-	go readData(rw)
+	go writeStreamFromStdin(rw)
+	go readFromStdinToStream(rw)
 	return h
 }
 
@@ -100,8 +100,8 @@ func ConnectToPeerAddress(dep *dependencies.Dependencies, address *string) *host
 	}
 	rw := connectToPeer(h, address)
 
-	go writeData(rw)
-	go readData(rw)
+	go writeStreamFromStdin(rw)
+	go readFromStdinToStream(rw)
 
 	return h
 }
