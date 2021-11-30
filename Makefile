@@ -1,5 +1,6 @@
 install:
-	#go install golang.org/x/tools/cmd/goimports@latest
+	go install golang.org/x/tools/cmd/goimports@latest
+	go get -d github.com/vektra/mockery/v2/.../
 	go mod vendor
 
 test:
