@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services"
 	"os"
 
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/dependencies"
@@ -53,7 +54,7 @@ func writeStreamFromStdin(rw *bufio.ReadWriter) {
 }
 
 func StartPeer(dep *dependencies.Dependencies) *host.Host {
-	words := random.GenerateRandomWords()
+	otp := random.GenerateRandomWords()
 	h, err := connectToBootsrapNode(dep)
 	if err != nil {
 		log.Fatalln(err)
@@ -65,10 +66,12 @@ func StartPeer(dep *dependencies.Dependencies) *host.Host {
 	})
 
 	multiAddr := fmt.Sprintf("/ip4/%s/tcp/%v/p2p/%s \n", dep.Config.LocalP2pPeerIp, net.GetPort(*h), (*h).ID().Pretty())
-	dep.BlitzshareApi.RegisterAsPeer(multiAddr, words)
+	dep.BlitzshareApi.RegisterAsPeer(multiAddr, otp)
 	log.Printf("P2p Address: %s", multiAddr)
-	log.Printf("P2p OTP: %s", words)
-	//log.Printf("run: go run ./cmd/*.go -p %s\n", words)
+	log.Printf("P2p OTP: %s", otp)
+	services.CopyToClipBoard(&otp)
+	log.Printf("(OTP Copied to Clip Board)")
+	//log.Printf("run: go run ./cmd/*.go -p %s\n", otp)
 	return h
 }
 
