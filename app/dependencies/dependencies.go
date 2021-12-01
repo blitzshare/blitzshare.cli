@@ -8,8 +8,8 @@ import (
 
 type Dependencies struct {
 	Config        *cfg.AppConfig
-	BlitzshareApi *blitzshare.BlitzshareApiImpl
-	P2p           *p2p.P2pImp
+	BlitzshareApi blitzshare.BlitzshareApi
+	P2p           p2p.P2p
 }
 
 func NewDependencies(config *cfg.AppConfig) (*Dependencies, error) {

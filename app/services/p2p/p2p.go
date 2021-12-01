@@ -20,11 +20,12 @@ type P2p interface {
 	ConnectToBootsrapNode(conf *config.AppConfig) *host.Host
 	ConnectToPeer(h *host.Host, address *string, protocol protocol.ID) *bufio.ReadWriter
 }
+
 type P2pImp struct {
 	P2p
 }
 
-func NewP2p() *P2pImp {
+func NewP2p() P2p {
 	return &P2pImp{}
 }
 
@@ -34,7 +35,7 @@ func (impl *P2pImp) StartPeer(conf *config.AppConfig, protocol protocol.ID, hand
 	return h
 }
 
-func (impl *P2pImp) ConnectToBootsrapNode(conf *config.AppConfig) *host.Host {
+func (impl *P2pImp) f(conf *config.AppConfig) *host.Host {
 	log.Printf("[Connecting] P2p network")
 	ctx := context.Background()
 	host, err := libp2p.New(ctx,
@@ -78,4 +79,28 @@ func (impl *P2pImp) ConnectToPeer(h *host.Host, address *string, protocol protoc
 		log.Fatalln(err)
 	}
 	return rw
+}
+
+func (*P2pImp) ConnectToBootsrapNode(conf *config.AppConfig) *host.Host {
+	log.Printf("[Connecting] P2p network")
+	ctx := context.Background()
+	host, err := libp2p.New(ctx,
+		//libp2p.Security(tls.ID, tls.New),
+		libp2p.EnableRelay(),
+	)
+	targetAddr, err := multiaddr.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d/p2p/%s", conf.P2pBoostrapNodeIp, conf.P2pBoostrapNodePort, conf.P2pBoostrapNodeId))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	targetInfo, err := peer.AddrInfoFromP2pAddr(targetAddr)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = host.Connect(ctx, *targetInfo)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Printf("[Connected] %s", targetAddr)
+
+	return &host
 }
