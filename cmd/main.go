@@ -21,7 +21,8 @@ func initLog() {
 
 func main() {
 	initLog()
-	peer := flag.Bool("peer", false, "Connect to p2p peer")
+	sender := flag.Bool("sender", false, "Start p2p sender peer session")
+	receiver := flag.Bool("receiver", false, "Start p2p receiver peer session")
 	flag.Parse()
 	cfg, err := config.Load()
 	if err != nil {
@@ -31,9 +32,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load dependencies %v\n", err)
 	}
-	if *peer {
+	if *sender {
 		app.StartPeer(deps)
-	} else {
+	} else if *receiver {
 		log.Println("Enter OTP:")
 		line := services.ReadStdInLine()
 		otp := str.SanatizeStr(*line)

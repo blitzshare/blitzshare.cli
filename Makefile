@@ -4,20 +4,20 @@ install:
 	go mod vendor
 
 test:
-	ENV=test && go test -v ./... -v -count=1
+	ENV=test && go test -v ./... -v -count=1 && echo $?
 
 fix-format:
 	gofmt -w -s app/ pkg/ cmd/ mocks/ testhelpers
 	goimports -w app/ pkg/ cmd/ mocks/ testhelpers
 
 start:
-	go run cmd/main.go
+	go run cmd/main.go --sender
 
-start-peer:
-	go run cmd/main.go --peer
+start-receiver:
+	go run cmd/main.go --receiver
 
 build:
-	GIN_MODE=release go build -o p2p-client app/main.go
+	go build -o p2p-client cmd/main.go
 
 build-docker:
 	docker build -t blitzshare.bootstrap.node .

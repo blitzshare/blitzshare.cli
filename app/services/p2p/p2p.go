@@ -16,9 +16,9 @@ import (
 )
 
 type P2p interface {
-	StartPeer(conf *config.AppConfig, protocol protocol.ID, handler func(s network.Stream)) string
+	StartPeer(conf *config.AppConfig, otp *string, handler func(s network.Stream)) string
 	ConnectToBootsrapNode(conf *config.AppConfig) *host.Host
-	ConnectToPeer(conf *config.AppConfig, address *string, protocol protocol.ID) *bufio.ReadWriter
+	ConnectToPeer(conf *config.AppConfig, address *string, otp *string) *bufio.ReadWriter
 	Close() error
 }
 
@@ -35,14 +35,19 @@ func (impl *P2pImp) Close() error {
 	return (*impl.host).Close()
 }
 
-func (impl *P2pImp) StartPeer(conf *config.AppConfig, protocol protocol.ID, handler func(s network.Stream)) string {
+func getProtocol(otp *string) protocol.ID {
+	proto := fmt.Sprintf("/blitzshare/1.0.0/%s", *otp)
+	return protocol.ID(proto)
+}
+
+func (impl *P2pImp) StartPeer(conf *config.AppConfig, otp *string, handler func(s network.Stream)) string {
 	impl.host = impl.ConnectToBootsrapNode(conf)
-	(*impl.host).SetStreamHandler(protocol, handler)
+	(*impl.host).SetStreamHandler(getProtocol(otp), handler)
 	multiAddr := fmt.Sprintf("/ip4/%s/tcp/%v/p2p/%s \n", conf.LocalP2pPeerIp, GetPort(*impl.host), (*impl.host).ID().Pretty())
 	return multiAddr
 }
 
-func (impl *P2pImp) ConnectToPeer(conf *config.AppConfig, address *string, protocol protocol.ID) *bufio.ReadWriter {
+func (impl *P2pImp) ConnectToPeer(conf *config.AppConfig, address *string, otp *string) *bufio.ReadWriter {
 	h := impl.ConnectToBootsrapNode(conf)
 	maddr, err := multiaddr.NewMultiaddr(*address)
 	if err != nil {
@@ -53,7 +58,7 @@ func (impl *P2pImp) ConnectToPeer(conf *config.AppConfig, address *string, proto
 		log.Fatalln(err)
 	}
 	(*h).Peerstore().AddAddrs(info.ID, info.Addrs, peerstore.PermanentAddrTTL)
-	s, err := (*h).NewStream(context.Background(), info.ID, protocol)
+	s, err := (*h).NewStream(context.Background(), info.ID, getProtocol(otp))
 	if err != nil {
 		log.Fatalln(err)
 	}
