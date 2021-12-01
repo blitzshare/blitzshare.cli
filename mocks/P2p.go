@@ -20,6 +20,20 @@ type P2p struct {
 	mock.Mock
 }
 
+// Close provides a mock function with given fields:
+func (_m *P2p) Close() error {
+	ret := _m.Called()
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func() error); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // ConnectToBootsrapNode provides a mock function with given fields: conf
 func (_m *P2p) ConnectToBootsrapNode(conf *config.AppConfig) *host.Host {
 	ret := _m.Called(conf)
@@ -36,13 +50,13 @@ func (_m *P2p) ConnectToBootsrapNode(conf *config.AppConfig) *host.Host {
 	return r0
 }
 
-// ConnectToPeer provides a mock function with given fields: h, address, _a2
-func (_m *P2p) ConnectToPeer(h *host.Host, address *string, _a2 protocol.ID) *bufio.ReadWriter {
-	ret := _m.Called(h, address, _a2)
+// ConnectToPeer provides a mock function with given fields: conf, address, _a2
+func (_m *P2p) ConnectToPeer(conf *config.AppConfig, address *string, _a2 protocol.ID) *bufio.ReadWriter {
+	ret := _m.Called(conf, address, _a2)
 
 	var r0 *bufio.ReadWriter
-	if rf, ok := ret.Get(0).(func(*host.Host, *string, protocol.ID) *bufio.ReadWriter); ok {
-		r0 = rf(h, address, _a2)
+	if rf, ok := ret.Get(0).(func(*config.AppConfig, *string, protocol.ID) *bufio.ReadWriter); ok {
+		r0 = rf(conf, address, _a2)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*bufio.ReadWriter)
@@ -53,24 +67,15 @@ func (_m *P2p) ConnectToPeer(h *host.Host, address *string, _a2 protocol.ID) *bu
 }
 
 // StartPeer provides a mock function with given fields: conf, _a1, handler
-func (_m *P2p) StartPeer(conf *config.AppConfig, _a1 protocol.ID, handler func(network.Stream)) (*host.Host, string) {
+func (_m *P2p) StartPeer(conf *config.AppConfig, _a1 protocol.ID, handler func(network.Stream)) string {
 	ret := _m.Called(conf, _a1, handler)
 
-	var r0 *host.Host
-	if rf, ok := ret.Get(0).(func(*config.AppConfig, protocol.ID, func(network.Stream)) *host.Host); ok {
+	var r0 string
+	if rf, ok := ret.Get(0).(func(*config.AppConfig, protocol.ID, func(network.Stream)) string); ok {
 		r0 = rf(conf, _a1, handler)
 	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*host.Host)
-		}
+		r0 = ret.Get(0).(string)
 	}
 
-	var r1 string
-	if rf, ok := ret.Get(1).(func(*config.AppConfig, protocol.ID, func(network.Stream)) string); ok {
-		r1 = rf(conf, _a1, handler)
-	} else {
-		r1 = ret.Get(1).(string)
-	}
-
-	return r0, r1
+	return r0
 }

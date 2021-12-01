@@ -1,15 +1,29 @@
 package random_test
 
 import (
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/random"
 	"testing"
 
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/random"
-	"github.com/stretchr/testify/assert"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-func TestRandom(t *testing.T) {
-	words := random.GenerateRandomWords()
-	assert.NotNil(t, words)
-	assert.Greater(t, len(words), 6)
-	assert.NotEqual(t, random.GenerateRandomWords(), words)
+func TestRandomService(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "random test")
 }
+
+var _ = Describe("test random module", func() {
+	var rnd random.Rnd
+	BeforeSuite(func() {
+		rnd = random.NewRnd()
+	})
+	Context("given random instance", func() {
+		It("expected to generate random word sequence", func() {
+			words := rnd.GenerateRandomWordSequence()
+			Expect(words).To(Not(BeNil()))
+			Expect(len(*words) > 6).To(BeTrue())
+			Expect(words).To(Not(Equal(rnd.GenerateRandomWordSequence())))
+		})
+	})
+})

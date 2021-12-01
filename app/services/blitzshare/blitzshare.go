@@ -16,7 +16,7 @@ type PeerAddress struct {
 }
 
 type BlitzshareApi interface {
-	RegisterAsPeer(multiAddr string, oneTimePass string) bool
+	RegisterAsPeer(multiAddr string, oneTimePass *string) bool
 	GetPeerAddr(oneTimePass *string) *PeerAddress
 }
 
@@ -29,10 +29,10 @@ func NewBlitzsahreApi(config *cfg.AppConfig) BlitzshareApi {
 	return &BlitzshareApiImpl{BaseUrl: config.BlitzshareApiUrl}
 }
 
-func (impl *BlitzshareApiImpl) RegisterAsPeer(multiAddr string, oneTimePass string) bool {
+func (impl *BlitzshareApiImpl) RegisterAsPeer(multiAddr string, oneTimePass *string) bool {
 	body, err := json.Marshal(map[string]string{
 		"multiAddr":   multiAddr,
-		"oneTimePass": oneTimePass,
+		"oneTimePass": *oneTimePass,
 	})
 	if err != nil {
 		log.Fatal(err)

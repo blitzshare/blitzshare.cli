@@ -4,14 +4,11 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services"
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/random"
-
 	//"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services"
 	"os"
 
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/dependencies"
 
-	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/network"
 	log "github.com/sirupsen/logrus"
 )
@@ -48,30 +45,27 @@ func writeStreamFromStdin(rw *bufio.ReadWriter) {
 	}
 }
 
-func StartPeer(dep *dependencies.Dependencies) *host.Host {
-	h, multiAddr := dep.P2p.StartPeer(dep.Config, Protocol, func(s network.Stream) {
+type OTP = string
+type MultiAddr = string
+
+func StartPeer(dep *dependencies.Dependencies) *OTP {
+	multiAddr := dep.P2p.StartPeer(dep.Config, Protocol, func(s network.Stream) {
 		rw := bufio.NewReadWriter(bufio.NewReader(s), bufio.NewWriter(s))
 		go readFromStdinToStream(rw)
 		go writeStreamFromStdin(rw)
 	})
-	otp := random.GenerateRandomWords()
+	otp := dep.Rnd.GenerateRandomWordSequence()
 	dep.BlitzshareApi.RegisterAsPeer(multiAddr, otp)
-
-	services.CopyToClipBoard(&otp)
-	log.Printf("P2p Address: %s", multiAddr)
-	log.Printf("P2p OTP: %s", otp)
-
-	log.Printf("(OTP Copied to Clip Board)")
-	return h
+	services.CopyToClipBoard(otp)
+	return otp
 }
 
-func ConnectToPeerPass(dep *dependencies.Dependencies, pass *string) *host.Host {
-	h := dep.P2p.ConnectToBootsrapNode(dep.Config)
+func ConnectToPeerOTP(dep *dependencies.Dependencies, pass *string) MultiAddr {
 	address := dep.BlitzshareApi.GetPeerAddr(pass)
 	log.Printf("[Connecting] OTP: %s", *pass)
-	rw := dep.P2p.ConnectToPeer(h, &address.MultiAddr, Protocol)
+	rw := dep.P2p.ConnectToPeer(dep.Config, &address.MultiAddr, Protocol)
 	log.Printf("[Connected] P2p Address: %s", address.MultiAddr)
 	go writeStreamFromStdin(rw)
 	go readFromStdinToStream(rw)
-	return h
+	return address.MultiAddr
 }

@@ -11,7 +11,6 @@ import (
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app"
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/dependencies"
-	"github.com/libp2p/go-libp2p-core/host"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -32,21 +31,20 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load dependencies %v\n", err)
 	}
-	var host *host.Host
 	if *peer {
-		host = app.StartPeer(deps)
-	}else {
+		app.StartPeer(deps)
+	} else {
 		log.Println("Enter OTP:")
 		line := services.ReadStdInLine()
 		otp := str.SanatizeStr(*line)
-		host = app.ConnectToPeerPass(deps, &otp)
+		app.ConnectToPeerOTP(deps, &otp)
 	}
 	services.PrintLogo()
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT)
 	select {
 	case <-stop:
-		(*host).Close()
+		deps.P2p.Close()
 		os.Exit(0)
 	}
 }

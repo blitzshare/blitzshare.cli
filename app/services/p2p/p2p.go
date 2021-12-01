@@ -17,12 +17,14 @@ import (
 )
 
 type P2p interface {
-	StartPeer(conf *config.AppConfig, protocol protocol.ID, handler func(s network.Stream)) (*host.Host, string)
+	StartPeer(conf *config.AppConfig, protocol protocol.ID, handler func(s network.Stream)) string
 	ConnectToBootsrapNode(conf *config.AppConfig) *host.Host
-	ConnectToPeer(h *host.Host, address *string, protocol protocol.ID) *bufio.ReadWriter
+	ConnectToPeer(conf *config.AppConfig, address *string, protocol protocol.ID) *bufio.ReadWriter
+	Close() error
 }
 
 type P2pImp struct {
+	host *host.Host
 	P2p
 }
 
@@ -30,39 +32,19 @@ func NewP2p() P2p {
 	return &P2pImp{}
 }
 
-func (impl *P2pImp) StartPeer(conf *config.AppConfig, protocol protocol.ID, handler func(s network.Stream)) (*host.Host, string) {
+func (impl *P2pImp) Close() error {
+	return (*impl.host).Close()
+}
+
+func (impl *P2pImp) StartPeer(conf *config.AppConfig, protocol protocol.ID, handler func(s network.Stream)) string {
+	impl.host = impl.ConnectToBootsrapNode(conf)
+	(*impl.host).SetStreamHandler(protocol, handler)
+	multiAddr := fmt.Sprintf("/ip4/%s/tcp/%v/p2p/%s \n", conf.LocalP2pPeerIp, net.GetPort(*impl.host), (*impl.host).ID().Pretty())
+	return multiAddr
+}
+
+func (impl *P2pImp) ConnectToPeer(conf *config.AppConfig, address *string, protocol protocol.ID) *bufio.ReadWriter {
 	h := impl.ConnectToBootsrapNode(conf)
-	(*h).SetStreamHandler(protocol, handler)
-	multiAddr := fmt.Sprintf("/ip4/%s/tcp/%v/p2p/%s \n", conf.LocalP2pPeerIp, net.GetPort(*h), (*h).ID().Pretty())
-	return h, multiAddr
-}
-
-func (impl *P2pImp) f(conf *config.AppConfig) *host.Host {
-	log.Printf("[Connecting] P2p network")
-	ctx := context.Background()
-	host, err := libp2p.New(ctx,
-		//libp2p.Security(tls.ID, tls.New),
-		libp2p.EnableRelay(),
-	)
-	targetAddr, err := multiaddr.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d/p2p/%s", conf.P2pBoostrapNodeIp, conf.P2pBoostrapNodePort, conf.P2pBoostrapNodeId))
-	if err != nil {
-		log.Fatalln(err)
-
-	}
-	targetInfo, err := peer.AddrInfoFromP2pAddr(targetAddr)
-	if err != nil {
-		log.Panicln(err)
-	}
-	err = host.Connect(ctx, *targetInfo)
-	if err != nil {
-		log.Panicln(err)
-	}
-	log.Printf("[Connected] %s", targetAddr)
-
-	return &host
-}
-
-func (impl *P2pImp) ConnectToPeer(h *host.Host, address *string, protocol protocol.ID) *bufio.ReadWriter {
 	maddr, err := multiaddr.NewMultiaddr(*address)
 	if err != nil {
 		log.Fatalln(err)
@@ -96,6 +78,7 @@ func (*P2pImp) ConnectToBootsrapNode(conf *config.AppConfig) *host.Host {
 	}
 	targetInfo, err := peer.AddrInfoFromP2pAddr(targetAddr)
 	if err != nil {
+		log.Fatalln(err)
 		log.Fatalln(err)
 	}
 	err = host.Connect(ctx, *targetInfo)

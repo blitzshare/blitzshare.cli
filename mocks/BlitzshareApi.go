@@ -29,11 +29,11 @@ func (_m *BlitzshareApi) GetPeerAddr(oneTimePass *string) *blitzshare.PeerAddres
 }
 
 // RegisterAsPeer provides a mock function with given fields: multiAddr, oneTimePass
-func (_m *BlitzshareApi) RegisterAsPeer(multiAddr string, oneTimePass string) bool {
+func (_m *BlitzshareApi) RegisterAsPeer(multiAddr string, oneTimePass *string) bool {
 	ret := _m.Called(multiAddr, oneTimePass)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(string, string) bool); ok {
+	if rf, ok := ret.Get(0).(func(string, *string) bool); ok {
 		r0 = rf(multiAddr, oneTimePass)
 	} else {
 		r0 = ret.Get(0).(bool)
