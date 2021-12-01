@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/net"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/network"
@@ -39,7 +38,7 @@ func (impl *P2pImp) Close() error {
 func (impl *P2pImp) StartPeer(conf *config.AppConfig, protocol protocol.ID, handler func(s network.Stream)) string {
 	impl.host = impl.ConnectToBootsrapNode(conf)
 	(*impl.host).SetStreamHandler(protocol, handler)
-	multiAddr := fmt.Sprintf("/ip4/%s/tcp/%v/p2p/%s \n", conf.LocalP2pPeerIp, net.GetPort(*impl.host), (*impl.host).ID().Pretty())
+	multiAddr := fmt.Sprintf("/ip4/%s/tcp/%v/p2p/%s \n", conf.LocalP2pPeerIp, GetPort(*impl.host), (*impl.host).ID().Pretty())
 	return multiAddr
 }
 
