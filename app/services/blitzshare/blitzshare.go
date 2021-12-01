@@ -25,7 +25,7 @@ type BlitzshareApiImpl struct {
 	BlitzshareApi
 }
 
-func New(config *cfg.AppConfig) *BlitzshareApiImpl {
+func NewBlitzsahreApi(config *cfg.AppConfig) *BlitzshareApiImpl {
 	return &BlitzshareApiImpl{BaseUrl: config.BlitzshareApiUrl}
 }
 

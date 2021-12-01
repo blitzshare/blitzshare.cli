@@ -25,3 +25,6 @@ build-docker:
 build-docker-run:
 	docker build -t blitzshare.bootstrap.node .
 	docker run -t blitzshare.bootstrap.node
+
+build-mocks:
+	mockery --all --dir "./app/"
