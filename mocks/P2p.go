@@ -53,7 +53,7 @@ func (_m *P2p) ConnectToPeer(h *host.Host, address *string, _a2 protocol.ID) *bu
 }
 
 // StartPeer provides a mock function with given fields: conf, _a1, handler
-func (_m *P2p) StartPeer(conf *config.AppConfig, _a1 protocol.ID, handler func(network.Stream)) *host.Host {
+func (_m *P2p) StartPeer(conf *config.AppConfig, _a1 protocol.ID, handler func(network.Stream)) (*host.Host, string) {
 	ret := _m.Called(conf, _a1, handler)
 
 	var r0 *host.Host
@@ -65,5 +65,12 @@ func (_m *P2p) StartPeer(conf *config.AppConfig, _a1 protocol.ID, handler func(n
 		}
 	}
 
-	return r0
+	var r1 string
+	if rf, ok := ret.Get(1).(func(*config.AppConfig, protocol.ID, func(network.Stream)) string); ok {
+		r1 = rf(conf, _a1, handler)
+	} else {
+		r1 = ret.Get(1).(string)
+	}
+
+	return r0, r1
 }

@@ -3,9 +3,7 @@
 package mocks
 
 import (
-	config "github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
 	blitzshare "github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/blitzshare"
-
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -14,13 +12,13 @@ type BlitzshareApi struct {
 	mock.Mock
 }
 
-// GetPeerAddr provides a mock function with given fields: _a0, oneTimePass
-func (_m *BlitzshareApi) GetPeerAddr(_a0 *config.AppConfig, oneTimePass *string) *blitzshare.PeerAddress {
-	ret := _m.Called(_a0, oneTimePass)
+// GetPeerAddr provides a mock function with given fields: oneTimePass
+func (_m *BlitzshareApi) GetPeerAddr(oneTimePass *string) *blitzshare.PeerAddress {
+	ret := _m.Called(oneTimePass)
 
 	var r0 *blitzshare.PeerAddress
-	if rf, ok := ret.Get(0).(func(*config.AppConfig, *string) *blitzshare.PeerAddress); ok {
-		r0 = rf(_a0, oneTimePass)
+	if rf, ok := ret.Get(0).(func(*string) *blitzshare.PeerAddress); ok {
+		r0 = rf(oneTimePass)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*blitzshare.PeerAddress)
@@ -30,13 +28,13 @@ func (_m *BlitzshareApi) GetPeerAddr(_a0 *config.AppConfig, oneTimePass *string)
 	return r0
 }
 
-// RegisterAsPeer provides a mock function with given fields: _a0, multiAddr, oneTimePass
-func (_m *BlitzshareApi) RegisterAsPeer(_a0 *config.AppConfig, multiAddr string, oneTimePass string) bool {
-	ret := _m.Called(_a0, multiAddr, oneTimePass)
+// RegisterAsPeer provides a mock function with given fields: multiAddr, oneTimePass
+func (_m *BlitzshareApi) RegisterAsPeer(multiAddr string, oneTimePass string) bool {
+	ret := _m.Called(multiAddr, oneTimePass)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(*config.AppConfig, string, string) bool); ok {
-		r0 = rf(_a0, multiAddr, oneTimePass)
+	if rf, ok := ret.Get(0).(func(string, string) bool); ok {
+		r0 = rf(multiAddr, oneTimePass)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}

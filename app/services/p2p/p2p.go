@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/net"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/network"
@@ -16,7 +17,7 @@ import (
 )
 
 type P2p interface {
-	StartPeer(conf *config.AppConfig, protocol protocol.ID, handler func(s network.Stream)) *host.Host
+	StartPeer(conf *config.AppConfig, protocol protocol.ID, handler func(s network.Stream)) (*host.Host, string)
 	ConnectToBootsrapNode(conf *config.AppConfig) *host.Host
 	ConnectToPeer(h *host.Host, address *string, protocol protocol.ID) *bufio.ReadWriter
 }
@@ -29,10 +30,11 @@ func NewP2p() P2p {
 	return &P2pImp{}
 }
 
-func (impl *P2pImp) StartPeer(conf *config.AppConfig, protocol protocol.ID, handler func(s network.Stream)) *host.Host {
+func (impl *P2pImp) StartPeer(conf *config.AppConfig, protocol protocol.ID, handler func(s network.Stream)) (*host.Host, string) {
 	h := impl.ConnectToBootsrapNode(conf)
 	(*h).SetStreamHandler(protocol, handler)
-	return h
+	multiAddr := fmt.Sprintf("/ip4/%s/tcp/%v/p2p/%s \n", conf.LocalP2pPeerIp, net.GetPort(*h), (*h).ID().Pretty())
+	return h, multiAddr
 }
 
 func (impl *P2pImp) f(conf *config.AppConfig) *host.Host {
