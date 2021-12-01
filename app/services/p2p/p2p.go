@@ -24,7 +24,6 @@ type P2p interface {
 
 type P2pImp struct {
 	host *host.Host
-	P2p
 }
 
 func NewP2p() P2p {
@@ -72,7 +71,7 @@ func (impl *P2pImp) ConnectToPeer(conf *config.AppConfig, address *string, otp *
 func (*P2pImp) ConnectToBootsrapNode(conf *config.AppConfig) *host.Host {
 	log.Printf("[Connecting] P2p network")
 	ctx := context.Background()
-	host, err := libp2p.New(ctx,
+	h, err := libp2p.New(ctx,
 		//libp2p.Security(tls.ID, tls.New),
 		libp2p.EnableRelay(),
 	)
@@ -85,11 +84,11 @@ func (*P2pImp) ConnectToBootsrapNode(conf *config.AppConfig) *host.Host {
 		log.Fatalln(err)
 		log.Fatalln(err)
 	}
-	err = host.Connect(ctx, *targetInfo)
+	err = h.Connect(ctx, *targetInfo)
 	if err != nil {
 		log.Fatalln(err)
 	}
 	log.Printf("[Connected] %s", targetAddr)
 
-	return &host
+	return &h
 }

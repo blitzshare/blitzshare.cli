@@ -22,7 +22,6 @@ type BlitzshareApi interface {
 
 type BlitzshareApiImpl struct {
 	BaseUrl string
-	BlitzshareApi
 }
 
 func NewBlitzsahreApi(config *cfg.AppConfig) BlitzshareApi {
