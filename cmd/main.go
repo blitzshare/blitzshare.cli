@@ -2,11 +2,12 @@ package main
 
 import (
 	"flag"
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services"
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/str"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services"
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/str"
 
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app"
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
@@ -33,7 +34,8 @@ func main() {
 		log.Fatalf("failed to load dependencies %v\n", err)
 	}
 	if *sender {
-		app.StartPeer(deps)
+		otp := app.StartPeer(deps)
+		log.Printf("OTP: %s (copied to clipboard)", *otp)
 	} else if *receiver {
 		log.Println("Enter OTP:")
 		line := services.ReadStdInLine()
