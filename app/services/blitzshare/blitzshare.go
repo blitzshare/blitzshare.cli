@@ -11,37 +11,32 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-const BASE_CONFIG_API_URL = "http://10.104.137.88"
-
 type PeerAddress struct {
 	MultiAddr string `json:"multiAddr"`
 }
 
 type BlitzshareApi interface {
-	RegisterAsPeer(config *cfg.AppConfig, multiAddr string, oneTimePass string) bool
-	GetPeerAddr(config *cfg.AppConfig, oneTimePass *string) *PeerAddress
+	RegisterAsPeer(multiAddr string, oneTimePass *string) bool
+	GetPeerAddr(oneTimePass *string) *PeerAddress
 }
 
 type BlitzshareApiImpl struct {
-	BlitzshareApi
+	BaseUrl string
 }
 
-var BASE_URL string
-
-func New(config *cfg.AppConfig) *BlitzshareApiImpl {
-	BASE_URL = config.BlitzshareApiUrl
-	return &BlitzshareApiImpl{}
+func NewBlitzsahreApi(config *cfg.AppConfig) BlitzshareApi {
+	return &BlitzshareApiImpl{BaseUrl: config.BlitzshareApiUrl}
 }
 
-func (*BlitzshareApiImpl) RegisterAsPeer(multiAddr string, oneTimePass string) bool {
+func (impl *BlitzshareApiImpl) RegisterAsPeer(multiAddr string, oneTimePass *string) bool {
 	body, err := json.Marshal(map[string]string{
 		"multiAddr":   multiAddr,
-		"oneTimePass": oneTimePass,
+		"oneTimePass": *oneTimePass,
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	url := fmt.Sprintf("%s/p2p/registry", BASE_URL)
+	url := fmt.Sprintf("%s/p2p/registry", impl.BaseUrl)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(body))
 	if err != nil {
 		log.Fatal(err)
@@ -49,8 +44,8 @@ func (*BlitzshareApiImpl) RegisterAsPeer(multiAddr string, oneTimePass string) b
 	return resp.Status == "202 Accepted"
 }
 
-func (*BlitzshareApiImpl) GetPeerAddr(oneTimePass *string) *PeerAddress {
-	url := fmt.Sprintf("%s/p2p/registry/%s", BASE_URL, *oneTimePass)
+func (impl *BlitzshareApiImpl) GetPeerAddr(oneTimePass *string) *PeerAddress {
+	url := fmt.Sprintf("%s/p2p/registry/%s", impl.BaseUrl, *oneTimePass)
 	resp, err := http.Get(url)
 
 	if err != nil {
