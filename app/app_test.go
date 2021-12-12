@@ -2,6 +2,9 @@ package app_test
 
 import (
 	"bufio"
+	"os"
+	"testing"
+
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app"
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/dependencies"
@@ -10,8 +13,6 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/stretchr/testify/mock"
-	"os"
-	"testing"
 )
 
 func TestApp(t *testing.T) {
@@ -30,7 +31,7 @@ var _ = Describe("App tests", func() {
 			LocalP2pPeerIp:      "",
 		}
 	})
-	Context("given StartPeer", func() {
+	Context("given app module", func() {
 		It("expected StartPeer to return otp", func() {
 			api := &mocks.BlitzshareApi{}
 			api.On("RegisterAsPeer",
@@ -49,11 +50,16 @@ var _ = Describe("App tests", func() {
 			rnd := &mocks.Rnd{}
 			otp := "clogwood-bristle-overwrap-benzdifuran"
 			rnd.On("GenerateRandomWordSequence").Return(&otp)
+			clipboard := &mocks.ClipBoard{}
+			clipboard.On("CopyToClipBoard", mock.MatchedBy(func(input interface{}) bool {
+				return true
+			})).Return()
 			dep := &dependencies.Dependencies{
 				Config:        &mockedConfig,
 				BlitzshareApi: api,
 				P2p:           p2p,
 				Rnd:           rnd,
+				ClipBoard:     clipboard,
 			}
 			peerOTP := app.StartPeer(dep)
 			Expect(otp).To(Equal(*peerOTP))

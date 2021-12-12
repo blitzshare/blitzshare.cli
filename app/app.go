@@ -3,7 +3,7 @@ package app
 import (
 	"bufio"
 	"fmt"
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services"
+
 	//"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services"
 	"os"
 
@@ -49,7 +49,7 @@ func StartPeer(dep *dependencies.Dependencies) *OTP {
 		go writeStreamFromStdin(rw)
 	})
 	dep.BlitzshareApi.RegisterAsPeer(multiAddr, otp)
-	services.CopyToClipBoard(otp)
+	dep.ClipBoard.CopyToClipBoard(otp)
 	return otp
 }
 
