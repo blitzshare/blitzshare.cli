@@ -16,37 +16,37 @@ type PeerAddress struct {
 }
 
 type BlitzshareApi interface {
-	RegisterAsPeer(config *cfg.AppConfig, multiAddr string, oneTimePass string) bool
-	GetPeerAddr(config *cfg.AppConfig, oneTimePass *string) *PeerAddress
+	RegisterAsPeer(multiAddr string, oneTimePass *string) bool
+	GetPeerAddr(oneTimePass *string) *PeerAddress
 }
 
 type BlitzshareApiImpl struct {
 	BaseUrl string
-	BlitzshareApi
 }
 
-func New(config *cfg.AppConfig) *BlitzshareApiImpl {
+func NewBlitzsahreApi(config *cfg.AppConfig) BlitzshareApi {
 	return &BlitzshareApiImpl{BaseUrl: config.BlitzshareApiUrl}
 }
 
-func (self *BlitzshareApiImpl) RegisterAsPeer(multiAddr string, oneTimePass string) bool {
+func (impl *BlitzshareApiImpl) RegisterAsPeer(multiAddr string, oneTimePass *string) bool {
 	body, err := json.Marshal(map[string]string{
-		"multiAddr":   multiAddr,
-		"oneTimePass": oneTimePass,
+		"multiAddr": multiAddr,
+		"otp":       *oneTimePass,
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	url := fmt.Sprintf("%s/p2p/registry", self.BaseUrl)
+	url := fmt.Sprintf("%s/p2p/registry", impl.BaseUrl)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(body))
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println("@@@@@@@@@@@@@", resp.Status)
 	return resp.Status == "202 Accepted"
 }
 
-func (self *BlitzshareApiImpl) GetPeerAddr(oneTimePass *string) *PeerAddress {
-	url := fmt.Sprintf("%s/p2p/registry/%s", self.BaseUrl, *oneTimePass)
+func (impl *BlitzshareApiImpl) GetPeerAddr(oneTimePass *string) *PeerAddress {
+	url := fmt.Sprintf("%s/p2p/registry/%s", impl.BaseUrl, *oneTimePass)
 	resp, err := http.Get(url)
 
 	if err != nil {

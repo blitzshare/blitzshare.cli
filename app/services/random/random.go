@@ -7,8 +7,20 @@ import (
 	"github.com/tjarratt/babble"
 )
 
-func GenerateRandomWords() string {
+type RndImpl struct {
+}
+
+type Rnd interface {
+	GenerateRandomWordSequence() *string
+}
+
+func NewRnd() Rnd {
+	return &RndImpl{}
+}
+
+func (*RndImpl) GenerateRandomWordSequence() *string {
 	babbler := babble.NewBabbler()
 	str := fmt.Sprintf("%s-%s", babbler.Babble(), babbler.Babble())
-	return strings.ToLower(strings.Replace(str, "'", "", -1))
+	str = strings.ToLower(strings.Replace(str, "'", "", -1))
+	return &str
 }

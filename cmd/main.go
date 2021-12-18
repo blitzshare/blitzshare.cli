@@ -2,16 +2,16 @@ package main
 
 import (
 	"flag"
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services"
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/str"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services"
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/str"
+
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app"
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/dependencies"
-	"github.com/libp2p/go-libp2p-core/host"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -22,7 +22,8 @@ func initLog() {
 
 func main() {
 	initLog()
-	peer := flag.Bool("peer", false, "Connect to p2p peer")
+	sender := flag.Bool("sender", false, "Start p2p sender peer session")
+	receiver := flag.Bool("receiver", false, "Start p2p receiver peer session")
 	flag.Parse()
 	cfg, err := config.Load()
 	if err != nil {
@@ -32,21 +33,21 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load dependencies %v\n", err)
 	}
-	var host *host.Host
-	if *peer {
-		host = app.StartPeer(deps)
-	}else {
+	if *sender {
+		otp := app.StartPeer(deps)
+		log.Printf("OTP: %s (copied to clipboard)", *otp)
+	} else if *receiver {
 		log.Println("Enter OTP:")
 		line := services.ReadStdInLine()
 		otp := str.SanatizeStr(*line)
-		host = app.ConnectToPeerPass(deps, &otp)
+		app.ConnectToPeerOTP(deps, &otp)
 	}
 	services.PrintLogo()
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT)
 	select {
 	case <-stop:
-		(*host).Close()
+		deps.P2p.Close()
 		os.Exit(0)
 	}
 }
