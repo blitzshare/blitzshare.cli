@@ -41,7 +41,6 @@ func (impl *BlitzshareApiImpl) RegisterAsPeer(multiAddr string, oneTimePass *str
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("@@@@@@@@@@@@@", resp.Status)
 	return resp.Status == "202 Accepted"
 }
 

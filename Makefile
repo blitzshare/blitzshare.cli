@@ -11,10 +11,10 @@ fix-format:
 	goimports -w app/ pkg/ cmd/ mocks/ testhelpers
 
 start:
-	go run cmd/main.go --sender
+	go run cmd/main.go --init
 
-start-receiver:
-	go run cmd/main.go --receiver
+start-connect:
+	go run cmd/main.go --connect
 
 build:
 	go build -o p2p-client cmd/main.go
