@@ -33,6 +33,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load dependencies %v\n", err)
 	}
+	node := deps.BlitzshareApi.GetBootstrapNode()
+	if node == nil {
+		log.Fatalln("Could not get initial node configuration from remote server")
+	}
+	cfg.P2pBoostrapNodePort = node.Port
+	cfg.P2pBoostrapNodeId = node.NodeId
 	if *init {
 		otp := app.StartPeer(deps)
 		log.Printf("OTP: %s (copied to clipboard)", *otp)

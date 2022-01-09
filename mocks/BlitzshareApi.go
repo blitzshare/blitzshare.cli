@@ -12,6 +12,22 @@ type BlitzshareApi struct {
 	mock.Mock
 }
 
+// GetBootstrapNode provides a mock function with given fields:
+func (_m *BlitzshareApi) GetBootstrapNode() *blitzshare.NodeConfigRespone {
+	ret := _m.Called()
+
+	var r0 *blitzshare.NodeConfigRespone
+	if rf, ok := ret.Get(0).(func() *blitzshare.NodeConfigRespone); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*blitzshare.NodeConfigRespone)
+		}
+	}
+
+	return r0
+}
+
 // GetPeerAddr provides a mock function with given fields: oneTimePass
 func (_m *BlitzshareApi) GetPeerAddr(oneTimePass *string) *blitzshare.PeerAddress {
 	ret := _m.Called(oneTimePass)

@@ -15,9 +15,15 @@ type PeerAddress struct {
 	MultiAddr string `json:"multiAddr"`
 }
 
+type NodeConfigRespone struct {
+	NodeId string `json:"nodeId"`
+	Port   int    `json:"port"`
+}
+
 type BlitzshareApi interface {
 	RegisterAsPeer(multiAddr string, oneTimePass *string) bool
 	GetPeerAddr(oneTimePass *string) *PeerAddress
+	GetBootstrapNode() *NodeConfigRespone
 }
 
 type BlitzshareApiImpl struct {
@@ -59,4 +65,20 @@ func (impl *BlitzshareApiImpl) GetPeerAddr(oneTimePass *string) *PeerAddress {
 		fmt.Println(err)
 	}
 	return &peerAddress
+}
+
+func (impl *BlitzshareApiImpl) GetBootstrapNode() *NodeConfigRespone {
+	url := fmt.Sprintf("%s/p2p/bootstrap-node", impl.BaseUrl)
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatal(err)
+	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	config := NodeConfigRespone{}
+	err = json.Unmarshal(body, &config)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return &config
 }
