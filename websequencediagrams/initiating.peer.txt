@@ -1,0 +1,30 @@
+title Initiating Peer
+
+cli-> cli: Generate OTP
+cli->blitzshare.api: GET /p2p/bootstrap-node
+blitzshare.api-->cli: node config
+cli-> bootstrap.node: connect to boostrap node
+bootstrap.node-->cli: OK
+cli->cli: new TCP MultiAddr
+cli->libp2p: Connect
+libp2p-->cli: OK
+cli->libp2p: Connect to P2p Network
+libp2p-->cli: OK
+cli->libp2p: Create Read, Write Streams
+libp2p-->cli: OK
+
+loop: true
+note right of cli: paralel go routines
+cli->cli: Read StdIn + Write to P2p Stream
+cli->cli: Read P2p Stream + Write to StdOut Stream
+end
+
+cli->blitzshare.api: POST /p2p/registry
+blitzshare.api->cli: 202 Accepted
+blitzshare.api->kubemq: emit P2pPeerRegistryCmd
+kubemq-->blitzshare.api: OK
+kubemq->blitzshare.worker: emit P2pPeerRegistryCmd
+
+blitzshare.worker->redis: SET Peer Registry
+redis-->blitzshare.worker: OK
+
