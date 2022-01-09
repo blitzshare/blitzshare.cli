@@ -11,7 +11,7 @@ fix-format:
 	goimports -w app/ pkg/ cmd/ mocks/ testhelpers
 
 start:
-	GIN_MODE=release go run cmd/main.go --init
+	go run cmd/main.go --init
 
 start-connect:
 	go run cmd/main.go --connect
