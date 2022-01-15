@@ -29,10 +29,15 @@ func readFromStdinToStream(rw *bufio.ReadWriter) {
 	}
 }
 
-func writeStreamFromStdin(rw *bufio.ReadWriter) {
+func writeStreamFromStdin(rw *bufio.ReadWriter, onPeerConnectedCb func()) {
 	stdReader := bufio.NewReader(os.Stdin)
+	onConnectedCalled := false
 	for {
 		fmt.Print("> ")
+		if !onConnectedCalled && onPeerConnectedCb != nil {
+			onConnectedCalled = true
+			onPeerConnectedCb()
+		}
 		sendData, err := stdReader.ReadString('\n')
 		if err != nil {
 			log.Println(err)
@@ -46,14 +51,20 @@ func writeStreamFromStdin(rw *bufio.ReadWriter) {
 func StartPeer(dep *dependencies.Dependencies) *OTP {
 	mode := "chat"
 	otp := dep.Rnd.GenerateRandomWordSequence()
+	var token *string
 	multiAddr := dep.P2p.StartPeer(dep.Config, otp, func(s network.Stream) {
 		rw := bufio.NewReadWriter(bufio.NewReader(s), bufio.NewWriter(s))
-		startChat(rw)
+		go writeStreamFromStdin(rw, func() {
+			dep.BlitzshareApi.DeregisterAsPeer(otp, token)
+		})
+		go readFromStdinToStream(rw)
+
 	})
-	dep.BlitzshareApi.RegisterAsPeer(&multiAddr, otp, &mode)
+	token = dep.BlitzshareApi.RegisterAsPeer(&multiAddr, otp, &mode)
 	dep.ClipBoard.CopyToClipBoard(otp)
 	return otp
 }
+
 func SendFileToStream(file string, rw *bufio.ReadWriter) {
 	content, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -82,17 +93,11 @@ func StartPeerFs(dep *dependencies.Dependencies, file string) *OTP {
 		dep.BlitzshareApi.DeregisterAsPeer(otp, token)
 		fmt.Println("Connected established successfully, sending file")
 		SendFileToStream(file, rw)
-
 		os.Exit(0)
 	})
 	token = dep.BlitzshareApi.RegisterAsPeer(&multiAddr, otp, &mode)
 	dep.ClipBoard.CopyToClipBoard(otp)
 	return otp
-}
-
-func startChat(rw *bufio.ReadWriter) {
-	go writeStreamFromStdin(rw)
-	go readFromStdinToStream(rw)
 }
 
 func SaveStreamToFile(rw *bufio.ReadWriter, otp *string) {
@@ -120,7 +125,8 @@ func ConnectToPeerOTP(dep *dependencies.Dependencies, otp *string) *blitzshare.P
 	rw := dep.P2p.ConnectToPeer(dep.Config, &config.MultiAddr, otp)
 	log.Printf("[Connected] P2p Address: %s", config.MultiAddr)
 	if config.Mode == "chat" {
-		startChat(rw)
+		go writeStreamFromStdin(rw, nil)
+		go readFromStdinToStream(rw)
 	} else {
 		SaveStreamToFile(rw, otp)
 		ExitProc()
