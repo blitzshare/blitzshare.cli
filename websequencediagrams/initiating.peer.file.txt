@@ -1,6 +1,7 @@
-title Initiating Peer (chat mode)
+title Initiating Peer (file mode)
 
 cli-> cli: Generate OTP
+cli-> cli: Read file parameter
 cli->blitzshare.api: GET /p2p/bootstrap-node
 blitzshare.api-->cli: node config
 cli-> bootstrap.node: connect to boostrap node
@@ -12,7 +13,7 @@ cli->libp2p: Create Read, Write Streams
 libp2p-->cli: OK
 
 note right of cli: async calls (non blocking)
-cli->blitzshare.api: (async) POST /p2p/registry { mode: "chat" }
+cli->blitzshare.api: (async) POST /p2p/registry { mode: "file" }
 blitzshare.api->cli: 202 Accepted
 blitzshare.api->kubemq: emit P2pPeerRegisterCmd
 kubemq-->blitzshare.api: OK
@@ -20,12 +21,9 @@ kubemq->blitzshare.worker: (async) emit P2pPeerRegistryCmd
 
 note left of redis: OTP Expiration: 15 minutes
 blitzshare.worker->redis: SET Peer Registry
+
 redis-->blitzshare.worker: OK
 
-loop: true
-note right of cli: paralel go routines
-cli->cli: Read StdIn + Write to P2p Stream
-cli->cli: Read P2p Stream + Write to StdOut Stream
 alt is peer connected
 note right of cli: async calls (non blocking)
 cli->blitzshare.api: (async) DELETE /p2p/bootstrap-node
@@ -34,5 +32,10 @@ blitzshare.api->kubemq: emit P2pPeerDeregisterCmd
 kubemq-->blitzshare.api: OK
 kubemq->blitzshare.worker: (async) emit P2pPeerDeregisterCmd
 blitzshare.worker->redis: DEL Peer Registry
+redis-->blitzshare.worker: OK
+cli->libp2p: stream file to peer
+libp2p-->cli: OK
+cli->cli: process exit
 end
-end
+
+

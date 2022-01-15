@@ -1,0 +1,8 @@
+title Bootstrap Node Registry
+
+bootstrap.node->kubemq: emit NodeRegistryCmd
+kubemq-->bootstrap.node: OK
+
+kubemq->blitzshare.worker: NodeRegistryCmd
+blitzshare.worker->redis: SET NodeRegistry record
+redis-->blitzshare.worker: OK

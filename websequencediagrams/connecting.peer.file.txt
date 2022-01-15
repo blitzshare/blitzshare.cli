@@ -1,0 +1,32 @@
+title Connecting Peer (file mode)
+
+cli-> cli: Read OTP from StdIn
+cli->blitzshare.api: GET /p2p/bootstrap-node
+blitzshare.api-->cli: node config
+cli-> bootstrap.node: connect to boostrap node
+bootstrap.node-->cli: OK
+cli->cli: new TCP MultiAddr
+cli->libp2p: Connect
+libp2p-->cli: OK
+cli-> blitzshare.api: GET /p2p/registry/{otp}
+blitzshare.api-->cli: peer multiAddr
+cli->libp2p: Connect to P2p Peer
+libp2p-->cli: OK
+cli->libp2p: Create Read, Write Streams
+libp2p-->cli: OK
+
+
+
+alt: if peer connected
+cli->cli: conncection acceptance user prompt
+alt: if connection accepted by user:
+
+
+cli->libp2p: Open peer stream
+libp2p-->cli: file Stream
+cli->cli: save gile stream to local file
+cli->cli: process exit
+else
+cli->cli: process exit
+end
+end
