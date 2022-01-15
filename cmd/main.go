@@ -18,11 +18,15 @@ import (
 func initLog() {
 	log.SetFormatter(&log.TextFormatter{})
 	log.SetOutput(os.Stdout)
+	log.SetLevel(log.InfoLevel)
 }
 
 func main() {
 	initLog()
-	init := flag.Bool("init", false, "Start p2p sender peer session")
+	services.PrintLogo()
+	start := flag.Bool("start", false, "Start p2p init peer session")
+	var file string
+	flag.StringVar(&file, "file", "", "Start p2p init peer file share session")
 	connect := flag.Bool("connect", false, "Start p2p receiver peer session")
 	flag.Parse()
 	cfg, err := config.Load()
@@ -39,8 +43,13 @@ func main() {
 	}
 	cfg.P2pBoostrapNodePort = node.Port
 	cfg.P2pBoostrapNodeId = node.NodeId
-	if *init {
-		otp := app.StartPeer(deps)
+	if *start {
+		var otp *string
+		if file == "" {
+			otp = app.StartPeer(deps)
+		} else {
+			otp = app.StartPeerFs(deps, file)
+		}
 		log.Printf("OTP: %s (copied to clipboard)", *otp)
 	} else if *connect {
 		log.Println("Enter OTP:")
@@ -48,7 +57,6 @@ func main() {
 		otp := str.SanatizeStr(*line)
 		app.ConnectToPeerOTP(deps, &otp)
 	}
-	services.PrintLogo()
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT)
 	select {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
+	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/str"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/network"
@@ -47,9 +48,9 @@ func (impl *P2pImp) StartPeer(conf *config.AppConfig, otp *string, handler func(
 	return multiAddr
 }
 
-func (impl *P2pImp) ConnectToPeer(conf *config.AppConfig, address *string, otp *string) *bufio.ReadWriter {
+func (impl *P2pImp) ConnectToPeer(conf *config.AppConfig, address, otp *string) *bufio.ReadWriter {
 	h := impl.ConnectToBootsrapNode(conf)
-	maddr, err := multiaddr.NewMultiaddr(*address)
+	maddr, err := multiaddr.NewMultiaddr(str.SanatizeStr(*address))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -76,7 +77,7 @@ func (*P2pImp) ConnectToBootsrapNode(conf *config.AppConfig) *host.Host {
 		//libp2p.Security(tls.ID, tls.New),
 		libp2p.EnableRelay(),
 	)
-	targetAddr, err := multiaddr.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d/p2p/%s", conf.P2pBoostrapNodeIp, conf.P2pBoostrapNodePort, conf.P2pBoostrapNodeId))
+	targetAddr, err := multiaddr.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d/p2p/%s", str.SanatizeStr(conf.P2pBoostrapNodeIp), conf.P2pBoostrapNodePort, str.SanatizeStr(conf.P2pBoostrapNodeId)))
 	if err != nil {
 		log.Fatalln(err)
 	}

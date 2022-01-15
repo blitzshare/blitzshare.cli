@@ -12,6 +12,20 @@ type BlitzshareApi struct {
 	mock.Mock
 }
 
+// DeregisterAsPeer provides a mock function with given fields: otp, token
+func (_m *BlitzshareApi) DeregisterAsPeer(otp *string, token *string) bool {
+	ret := _m.Called(otp, token)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(*string, *string) bool); ok {
+		r0 = rf(otp, token)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	return r0
+}
+
 // GetBootstrapNode provides a mock function with given fields:
 func (_m *BlitzshareApi) GetBootstrapNode() *blitzshare.NodeConfigRespone {
 	ret := _m.Called()
@@ -29,30 +43,32 @@ func (_m *BlitzshareApi) GetBootstrapNode() *blitzshare.NodeConfigRespone {
 }
 
 // GetPeerAddr provides a mock function with given fields: oneTimePass
-func (_m *BlitzshareApi) GetPeerAddr(oneTimePass *string) *blitzshare.PeerAddress {
+func (_m *BlitzshareApi) GetPeerAddr(oneTimePass *string) *blitzshare.P2pPeerRegistryResponse {
 	ret := _m.Called(oneTimePass)
 
-	var r0 *blitzshare.PeerAddress
-	if rf, ok := ret.Get(0).(func(*string) *blitzshare.PeerAddress); ok {
+	var r0 *blitzshare.P2pPeerRegistryResponse
+	if rf, ok := ret.Get(0).(func(*string) *blitzshare.P2pPeerRegistryResponse); ok {
 		r0 = rf(oneTimePass)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*blitzshare.PeerAddress)
+			r0 = ret.Get(0).(*blitzshare.P2pPeerRegistryResponse)
 		}
 	}
 
 	return r0
 }
 
-// RegisterAsPeer provides a mock function with given fields: multiAddr, oneTimePass
-func (_m *BlitzshareApi) RegisterAsPeer(multiAddr string, oneTimePass *string) bool {
-	ret := _m.Called(multiAddr, oneTimePass)
+// RegisterAsPeer provides a mock function with given fields: multiAddr, oneTimePass, mode
+func (_m *BlitzshareApi) RegisterAsPeer(multiAddr *string, oneTimePass *string, mode *string) *string {
+	ret := _m.Called(multiAddr, oneTimePass, mode)
 
-	var r0 bool
-	if rf, ok := ret.Get(0).(func(string, *string) bool); ok {
-		r0 = rf(multiAddr, oneTimePass)
+	var r0 *string
+	if rf, ok := ret.Get(0).(func(*string, *string, *string) *string); ok {
+		r0 = rf(multiAddr, oneTimePass, mode)
 	} else {
-		r0 = ret.Get(0).(bool)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*string)
+		}
 	}
 
 	return r0

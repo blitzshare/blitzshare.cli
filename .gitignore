@@ -16,3 +16,5 @@ vendor/
 entrypoint
 .idea
 p2p-client
+
+blitzshare-*.txt

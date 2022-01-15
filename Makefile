@@ -11,7 +11,10 @@ fix-format:
 	goimports -w app/ pkg/ cmd/ mocks/ testhelpers
 
 start:
-	go run cmd/main.go --init
+	go run cmd/main.go --start
+
+start-fs:
+	go run cmd/main.go --start --file ./README.md
 
 start-connect:
 	go run cmd/main.go --connect
