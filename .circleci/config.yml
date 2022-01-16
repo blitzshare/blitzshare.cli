@@ -18,6 +18,10 @@ jobs:
       - run:
           name: Install Dependencies
           command: make install
+      - run:
+          name: Create words dict
+          command: |
+            sudo apt install --reinstall wamerican
       - save_cache:
           key: go-mod-v4-{{ checksum "go.sum" }}
           paths:
