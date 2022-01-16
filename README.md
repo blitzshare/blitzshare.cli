@@ -1,12 +1,14 @@
-# blitzshare.bootstrap.client.cli
-blitzshare.bootstrap.client.cli
+[![CircleCI](https://circleci.com/gh/blitzshare/blitzshare.cli/tree/main.svg?style=svg&circle-token=2d8209870f559c209f3167d0f28404d05339975e)](https://circleci.com/gh/blitzshare/blitzshare.cli/tree/main)
 
-https://docs.ipfs.io/concepts/libp2p/
+![logo](./assets/logo.png)
 
+# blitzshare.cli
+Blitzshare API client and P2p peer in libp2p network.
 
-Kademlia
-https://en.wikipedia.org/wiki/Kademlia
-https://dag.ipfs.io/
-https://explore.ipld.io/#/explore/QmSnuWmxptJZdLJpKRarxBMS2Ju2oANVrgbr2xWbie9b2D
-https://docs.ipfs.io/concepts/how-ipfs-works/#distributed-hash-tables-dhts
-END
+[api](https://github.com/blitzshare/blitzshare.api)
+[bootstrap node](https://github.com/blitzshare/blitzshare.bootstrap.node)
+
+## Libraries used
+[libp2p](https://docs.ipfs.io/concepts/libp2p/)
+
+[websequencediagrams](./websequencediagrams)
