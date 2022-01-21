@@ -8,7 +8,7 @@ import (
 	"bootstrap.cli/app"
 	"bootstrap.cli/app/config"
 	"bootstrap.cli/app/dependencies"
-	"bootstrap.cli/app/services/blitzshare"
+	blitzshare "bootstrap.cli/app/services/blitzshare"
 	"bootstrap.cli/mocks"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -68,7 +68,7 @@ var _ = Describe("App tests", func() {
 	Context("given ConnectToPeerOTP", func() {
 		It("expected ConnectToPeerOTP to connect", func() {
 			api := &mocks.BlitzshareApi{}
-			apiResponse := &blitzshare.PeerAddress{
+			apiResponse := &blitzshare.P2pPeerRegistryResponse{
 				MultiAddr: "tcp://0.0.0.0/whatever",
 			}
 			api.On("GetPeerAddr", mock.MatchedBy(func(input interface{}) bool {
