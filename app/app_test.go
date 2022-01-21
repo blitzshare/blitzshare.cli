@@ -8,7 +8,7 @@ import (
 	"bootstrap.cli/app"
 	"bootstrap.cli/app/config"
 	"bootstrap.cli/app/dependencies"
-	blitzshare "bootstrap.cli/app/services/blitzshare"
+	"bootstrap.cli/app/services/blitzshare"
 	"bootstrap.cli/mocks"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -18,9 +18,6 @@ import (
 func TestApp(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Registry test")
-}
-func anyMatch(input interface{}) bool {
-	return true
 }
 
 var _ = Describe("App tests", func() {
@@ -37,11 +34,18 @@ var _ = Describe("App tests", func() {
 	Context("given app module", func() {
 		It("expected StartPeer to return otp", func() {
 			api := &mocks.BlitzshareApi{}
+			token := "xxxxxxx"
 			api.On("RegisterAsPeer",
-				mock.MatchedBy(anyMatch)).Return(true),
-				mock.MatchedBy(anyMatch)).Return(true),
-				mock.MatchedBy(anyMatch)).Return(true),
-				).Return(true)
+				mock.MatchedBy(func(input interface{}) bool {
+					return true
+				}),
+				mock.MatchedBy(func(input interface{}) bool {
+					return true
+				}),
+				mock.MatchedBy(func(input interface{}) bool {
+					return true
+				}),
+			).Return(&token)
 			p2p := &mocks.P2p{}
 			p2p.On("StartPeer", mock.MatchedBy(func(input interface{}) bool {
 				return true
@@ -73,6 +77,7 @@ var _ = Describe("App tests", func() {
 			api := &mocks.BlitzshareApi{}
 			apiResponse := &blitzshare.P2pPeerRegistryResponse{
 				MultiAddr: "tcp://0.0.0.0/whatever",
+				Mode:      "chat",
 			}
 			api.On("GetPeerAddr", mock.MatchedBy(func(input interface{}) bool {
 				return true
@@ -95,7 +100,9 @@ var _ = Describe("App tests", func() {
 				P2p:           p2p,
 			}
 			address := app.ConnectToPeerOTP(dep, &otp)
-			Expect(address).To(Equal(apiResponse.MultiAddr))
+			Expect(address.MultiAddr).To(Equal(apiResponse.MultiAddr))
+			Expect(address.Otp).To(Equal(apiResponse.Otp))
+			Expect(address.Mode).To(Equal(apiResponse.Mode))
 		})
 	})
 })
