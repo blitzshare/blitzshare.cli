@@ -19,6 +19,9 @@ func TestApp(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Registry test")
 }
+func anyMatch(input interface{}) bool {
+	return true
+}
 
 var _ = Describe("App tests", func() {
 	var mockedConfig config.AppConfig
@@ -35,10 +38,10 @@ var _ = Describe("App tests", func() {
 		It("expected StartPeer to return otp", func() {
 			api := &mocks.BlitzshareApi{}
 			api.On("RegisterAsPeer",
-				mock.AnythingOfType("string"),
-				mock.MatchedBy(func(input interface{}) bool {
-					return true
-				})).Return(true)
+				mock.MatchedBy(anyMatch)).Return(true),
+				mock.MatchedBy(anyMatch)).Return(true),
+				mock.MatchedBy(anyMatch)).Return(true),
+				).Return(true)
 			p2p := &mocks.P2p{}
 			p2p.On("StartPeer", mock.MatchedBy(func(input interface{}) bool {
 				return true
