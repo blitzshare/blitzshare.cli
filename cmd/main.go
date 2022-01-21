@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"bootstrap.cli/app/services"
+	svc "bootstrap.cli/app/services"
 	"bootstrap.cli/app/services/str"
 
 	"bootstrap.cli/app"
@@ -23,7 +24,7 @@ func initLog() {
 
 func main() {
 	initLog()
-	services.PrintLogo()
+	svc.PrintLogo()
 	start := flag.Bool("start", false, "Start p2p init peer session")
 	var file string
 	flag.StringVar(&file, "file", "", "Start p2p init peer file share session")
