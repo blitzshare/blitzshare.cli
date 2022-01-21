@@ -68,7 +68,7 @@ func StartPeer(dep *dependencies.Dependencies) *OTP {
 func SendFileToStream(file string, rw *bufio.ReadWriter) {
 	content, err := ioutil.ReadFile(file)
 	if err != nil {
-		log.Fatalln("file %s cannot be read", file)
+		log.Fatalln("file cannot be read", file)
 	}
 	_, err = rw.Write(content)
 	if err != nil {
