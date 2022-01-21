@@ -9,7 +9,7 @@ install:
 	go mod vendor
 
 test:
-	ENV=test && go test -v ./... -v -count=1 && echo $?
+	ENV=test && go test --tags='test' -v ./... -v -count=1
 
 fix-format:
 	gofmt -w -s app/ pkg/ cmd/ mocks/ testhelpers
@@ -26,3 +26,6 @@ start-connect:
 
 build-mocks:
 	mockery --all --dir "./app/"
+
+build:
+	go build --tags 'clipboard'
