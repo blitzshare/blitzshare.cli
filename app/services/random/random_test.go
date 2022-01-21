@@ -1,7 +1,7 @@
 package random_test
 
 import (
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/random"
+	"bootstrap.cli/app/services/random"
 	"testing"
 
 	. "github.com/onsi/ginkgo"

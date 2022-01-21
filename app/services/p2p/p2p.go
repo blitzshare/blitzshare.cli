@@ -5,8 +5,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/str"
+	"bootstrap.cli/app/config"
+	"bootstrap.cli/app/services/str"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/network"

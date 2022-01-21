@@ -9,8 +9,8 @@ import (
 
 	"os"
 
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/dependencies"
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/blitzshare"
+	"bootstrap.cli/app/dependencies"
+	"bootstrap.cli/app/services/blitzshare"
 
 	"github.com/libp2p/go-libp2p-core/network"
 	log "github.com/sirupsen/logrus"

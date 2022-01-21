@@ -1,6 +1,11 @@
+SHELL := /bin/bash
+CWD := $(shell cd -P -- '$(shell dirname -- "$0")' && pwd -P)
+
+export GO111MODULE := on
+export GOBIN := $(CWD)/.bin
+
 install:
-	go install golang.org/x/tools/cmd/goimports@latest
-	go get -d github.com/vektra/mockery/v2/.../
+	go install $(shell go list -f '{{join .Imports " "}}' tools.go)
 	go mod vendor
 
 test:

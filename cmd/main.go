@@ -6,12 +6,12 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services"
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/str"
+	"bootstrap.cli/app/services"
+	"bootstrap.cli/app/services/str"
 
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app"
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/dependencies"
+	"bootstrap.cli/app"
+	"bootstrap.cli/app/config"
+	"bootstrap.cli/app/dependencies"
 	log "github.com/sirupsen/logrus"
 )
 

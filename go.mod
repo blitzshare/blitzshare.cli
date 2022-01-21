@@ -1,4 +1,4 @@
-module github.com/blitzshare/blitzshare.bootstrap.client.cli
+module bootstrap.cli
 
 go 1.17
 
@@ -28,7 +28,9 @@ require (
 	github.com/onsi/gomega v1.17.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/tjarratt/babble v0.0.0-20210505082055-cbca2a4833c1
+	github.com/vektra/mockery/v2 v2.9.4
 	golang.design/x/clipboard v0.5.3
+	golang.org/x/tools v0.1.2
 )
 
 require (
@@ -58,6 +60,7 @@ require (
 	github.com/jackpal/go-nat-pmp v1.0.2 // indirect
 	github.com/jbenet/go-temp-err-catcher v0.1.0 // indirect
 	github.com/jbenet/goprocess v0.1.4 // indirect
+	github.com/jessevdk/go-flags v1.4.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/koron/go-ssdp v0.0.2 // indirect
 	github.com/libp2p/go-addr-util v0.1.0 // indirect
@@ -130,10 +133,12 @@ require (
 	github.com/spf13/pflag v1.0.3 // indirect
 	github.com/spf13/viper v1.7.0 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
-	github.com/vektra/mockery/v2 v2.9.4 // indirect
 	github.com/whyrusleeping/go-keyspace v0.0.0-20160322163242-5b898ac5add1 // indirect
 	github.com/whyrusleeping/multiaddr-filter v0.0.0-20160516205228-e903e4adabd7 // indirect
 	github.com/whyrusleeping/timecache v0.0.0-20160911033111-cfcb2f1abfee // indirect
+	github.com/zimmski/go-mutesting v0.0.0-20210610104036-6d9217011a00 // indirect
+	github.com/zimmski/go-tool v0.0.0-20150119110811-2dfdc9ac8439 // indirect
+	github.com/zimmski/osutil v0.0.0-20190128123334-0d0b3ca231ac // indirect
 	go.opencensus.io v0.23.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
@@ -148,7 +153,6 @@ require (
 	golang.org/x/sys v0.0.0-20210816183151-1e6c022a8912 // indirect
 	golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.2 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/ini.v1 v1.51.0 // indirect

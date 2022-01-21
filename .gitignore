@@ -18,3 +18,5 @@ entrypoint
 p2p-client
 
 blitzshare-*.txt
+
+.bin

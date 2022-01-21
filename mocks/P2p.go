@@ -5,7 +5,7 @@ package mocks
 import (
 	bufio "bufio"
 
-	config "github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
+	config "bootstrap.cli/app/config"
 	host "github.com/libp2p/go-libp2p-core/host"
 
 	mock "github.com/stretchr/testify/mock"

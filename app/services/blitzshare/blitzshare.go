@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	cfg "github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
+	cfg "bootstrap.cli/app/config"
 	log "github.com/sirupsen/logrus"
 )
 

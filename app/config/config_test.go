@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/blitzshare/blitzshare.bootstrap.client.cli/app/config"
+	"bootstrap.cli/app/config"
 	"github.com/stretchr/testify/assert"
 )
 

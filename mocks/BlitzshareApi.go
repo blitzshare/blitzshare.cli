@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	blitzshare "github.com/blitzshare/blitzshare.bootstrap.client.cli/app/services/blitzshare"
+	blitzshare "bootstrap.cli/app/services/blitzshare"
 	mock "github.com/stretchr/testify/mock"
 )
 
