@@ -20,6 +20,10 @@ func TestApp(t *testing.T) {
 	RunSpecs(t, "Registry test")
 }
 
+func matchAny(input interface{}) bool {
+	return true
+}
+
 var _ = Describe("App tests", func() {
 	var mockedConfig config.AppConfig
 	BeforeSuite(func() {
@@ -36,24 +40,16 @@ var _ = Describe("App tests", func() {
 			api := &mocks.BlitzshareApi{}
 			token := "xxxxxxx"
 			api.On("RegisterAsPeer",
-				mock.MatchedBy(func(input interface{}) bool {
-					return true
-				}),
-				mock.MatchedBy(func(input interface{}) bool {
-					return true
-				}),
-				mock.MatchedBy(func(input interface{}) bool {
-					return true
-				}),
+				mock.MatchedBy(matchAny),
+				mock.MatchedBy(matchAny),
+				mock.MatchedBy(matchAny),
 			).Return(&token)
 			p2p := &mocks.P2p{}
-			p2p.On("StartPeer", mock.MatchedBy(func(input interface{}) bool {
-				return true
-			}), mock.MatchedBy(func(input interface{}) bool {
-				return true
-			}), mock.MatchedBy(func(input interface{}) bool {
-				return true
-			})).Return("tcp://0.0.0.0/whatever")
+			p2p.On("StartPeer",
+				mock.MatchedBy(matchAny),
+				mock.MatchedBy(matchAny),
+				mock.MatchedBy(matchAny),
+			).Return("tcp://0.0.0.0/whatever")
 			rnd := &mocks.Rnd{}
 			otp := "clogwood-bristle-overwrap-benzdifuran"
 			rnd.On("GenerateRandomWordSequence").Return(&otp)
@@ -85,13 +81,11 @@ var _ = Describe("App tests", func() {
 			p2p := &mocks.P2p{}
 
 			rw := bufio.NewReadWriter(bufio.NewReader(os.Stdin), bufio.NewWriter(os.Stdin))
-			p2p.On("ConnectToPeer", mock.MatchedBy(func(input interface{}) bool {
-				return true
-			}), mock.MatchedBy(func(input interface{}) bool {
-				return true
-			}), mock.MatchedBy(func(input interface{}) bool {
-				return true
-			})).Return(rw)
+			p2p.On("ConnectToPeer",
+				mock.MatchedBy(matchAny),
+				mock.MatchedBy(matchAny),
+				mock.MatchedBy(matchAny),
+			).Return(rw)
 
 			otp := "clogwood-bristle-overwrap-benzdifuran"
 			dep := &dependencies.Dependencies{

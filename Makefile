@@ -28,4 +28,4 @@ build-mocks:
 	mockery --all --dir "./app/"
 
 build:
-	go build
+	go build ./cmd/main.go
