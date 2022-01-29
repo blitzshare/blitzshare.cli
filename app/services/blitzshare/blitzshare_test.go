@@ -20,6 +20,10 @@ func TestRandomService(t *testing.T) {
 var _ = Describe("test blitzshare api module", func() {
 	var mockedConfig config.AppConfig
 	var api blitzshare.BlitzshareApi
+	multiAddr := "test-multiAddr"
+	otp := "otp-otp-otp"
+	mode := "file"
+	deRegisterToken := "de-registeration-token"
 	BeforeSuite(func() {
 		mockedConfig = config.AppConfig{
 			P2pBoostrapNodeIp:   "",
@@ -54,9 +58,9 @@ var _ = Describe("test blitzshare api module", func() {
 	})
 	Context("GetPeerConfig Tests", func() {
 		It("expected peer config for 200 (StatusOK)", func() {
-			otp := "otp-otp-otp"
+
 			nodeResponse := blitzshare.P2pPeerRegistryResponse{
-				MultiAddr: "test-MultiAddr",
+				MultiAddr: multiAddr,
 				Otp:       otp,
 				Mode:      "chat",
 			}
@@ -75,7 +79,57 @@ var _ = Describe("test blitzshare api module", func() {
 			httpmock.RegisterResponder("GET", url, resp)
 			peer := api.GetPeerConfig(&otp)
 			Expect(peer).To(BeNil())
-
+		})
+	})
+	Context("RegisterAsPeer Tests", func() {
+		It("expected to get de-registration token for http status 202 (StatusAccepted)", func() {
+			tokenResp := blitzshare.PeerRegistryAckResponse{
+				AckId: "ackId",
+				Token: deRegisterToken,
+			}
+			resp, _ := httpmock.NewJsonResponder(http.StatusAccepted, tokenResp)
+			url := fmt.Sprintf("%s/p2p/registry", mockedConfig.BlitzshareApiUrl)
+			httpmock.RegisterResponder("POST", url, resp)
+			token := api.RegisterAsPeer(&multiAddr, &otp, &mode)
+			Expect(*token).To(Equal(tokenResp.Token))
+		})
+		It("expected to not get nil for http status NOT 200 (StatusOK)", func() {
+			resp, _ := httpmock.NewJsonResponder(http.StatusOK, nil)
+			url := fmt.Sprintf("%s/p2p/registry", mockedConfig.BlitzshareApiUrl)
+			httpmock.RegisterResponder("POST", url, resp)
+			token := api.RegisterAsPeer(&multiAddr, &otp, &mode)
+			Expect(token).To(BeNil())
+		})
+		It("expected to not get nil for http status NOT 500 (StatusInternalServerError)", func() {
+			resp, _ := httpmock.NewJsonResponder(http.StatusInternalServerError, nil)
+			url := fmt.Sprintf("%s/p2p/registry", mockedConfig.BlitzshareApiUrl)
+			httpmock.RegisterResponder("POST", url, resp)
+			token := api.RegisterAsPeer(&multiAddr, &otp, &mode)
+			Expect(token).To(BeNil())
+		})
+	})
+	Context("DeregisterAsPeer Tests", func() {
+		It("expected to deregister successfully for http status 202 (StatusAccepted)", func() {
+			tokenResp := blitzshare.PeerRegistryAckResponse{
+				AckId: "ackId",
+				Token: deRegisterToken,
+			}
+			resp, _ := httpmock.NewJsonResponder(http.StatusAccepted, tokenResp)
+			url := fmt.Sprintf("%s/p2p/registry/%s/%s", mockedConfig.BlitzshareApiUrl, otp, deRegisterToken)
+			httpmock.RegisterResponder("DELETE", url, resp)
+			sucess := api.DeregisterAsPeer(&otp, &deRegisterToken)
+			Expect(sucess).To(BeTrue())
+		})
+		It("expected to fail deregister for http status 500 (StatusInternalServerError)", func() {
+			tokenResp := blitzshare.PeerRegistryAckResponse{
+				AckId: "ackId",
+				Token: "de-registeration-token",
+			}
+			resp, _ := httpmock.NewJsonResponder(http.StatusInternalServerError, tokenResp)
+			url := fmt.Sprintf("%s/p2p/registry/%s/%s", mockedConfig.BlitzshareApiUrl, otp, deRegisterToken)
+			httpmock.RegisterResponder("DELETE", url, resp)
+			sucess := api.DeregisterAsPeer(&otp, &deRegisterToken)
+			Expect(sucess).To(BeFalse())
 		})
 	})
 })
