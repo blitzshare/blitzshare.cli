@@ -113,7 +113,7 @@ func SaveStreamToFile(rw *bufio.ReadWriter, otp *string) {
 	}
 }
 func ConnectToPeerOTP(dep *dependencies.Dependencies, otp *string) *blitzshare.P2pPeerRegistryResponse {
-	config := dep.BlitzshareApi.GetPeerAddr(otp)
+	config := dep.BlitzshareApi.GetPeerConfig(otp)
 	log.Printf("Connect to peer OTP: %s, mode: %s", *otp, config.Mode)
 	log.Printf("Continue? [Y/n]")
 	r := bufio.NewReader(os.Stdin)

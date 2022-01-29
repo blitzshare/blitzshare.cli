@@ -42,8 +42,8 @@ func (_m *BlitzshareApi) GetBootstrapNode() *blitzshare.NodeConfigRespone {
 	return r0
 }
 
-// GetPeerAddr provides a mock function with given fields: oneTimePass
-func (_m *BlitzshareApi) GetPeerAddr(oneTimePass *string) *blitzshare.P2pPeerRegistryResponse {
+// GetPeerConfig provides a mock function with given fields: oneTimePass
+func (_m *BlitzshareApi) GetPeerConfig(oneTimePass *string) *blitzshare.P2pPeerRegistryResponse {
 	ret := _m.Called(oneTimePass)
 
 	var r0 *blitzshare.P2pPeerRegistryResponse

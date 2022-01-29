@@ -74,8 +74,9 @@ var _ = Describe("App tests", func() {
 			apiResponse := &blitzshare.P2pPeerRegistryResponse{
 				MultiAddr: "tcp://0.0.0.0/whatever",
 				Mode:      "chat",
+				Otp:       "otp",
 			}
-			api.On("GetPeerAddr", mock.MatchedBy(func(input interface{}) bool {
+			api.On("GetPeerConfig", mock.MatchedBy(func(_ interface{}) bool {
 				return true
 			})).Return(apiResponse)
 			p2p := &mocks.P2p{}
