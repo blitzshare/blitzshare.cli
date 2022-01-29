@@ -8,6 +8,8 @@ import (
 	"bootstrap.cli/app/config"
 	"bootstrap.cli/app/services/str"
 	"github.com/libp2p/go-libp2p"
+	tls "github.com/libp2p/go-libp2p-tls"
+
 	"github.com/libp2p/go-libp2p-core/host"
 	"github.com/libp2p/go-libp2p-core/network"
 	"github.com/libp2p/go-libp2p-core/peer"
@@ -74,7 +76,7 @@ func (*P2pImp) ConnectToBootsrapNode(conf *config.AppConfig) *host.Host {
 	log.Printf("[Connecting] P2p network")
 	ctx := context.Background()
 	h, err := libp2p.New(ctx,
-		//libp2p.Security(tls.ID, tls.New),
+		libp2p.Security(tls.ID, tls.New),
 		libp2p.EnableRelay(),
 	)
 	targetAddr, err := multiaddr.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d/p2p/%s", str.SanatizeStr(conf.P2pBoostrapNodeIp), conf.P2pBoostrapNodePort, str.SanatizeStr(conf.P2pBoostrapNodeId)))
