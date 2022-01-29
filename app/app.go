@@ -66,21 +66,23 @@ func StartPeer(dep *dependencies.Dependencies) *OTP {
 }
 
 func SendFileToStream(file string, rw *bufio.ReadWriter) {
-	content, err := ioutil.ReadFile(file)
+	fHandle, err := os.Open(file)
 	if err != nil {
-		log.Fatalln("file cannot be read", file)
+		log.Fatal(err)
 	}
-	_, err = rw.Write(content)
-	if err != nil {
-		log.Fatalln("falied to write file contenct to peer stream", err.Error())
+	defer fHandle.Close()
+	scanner := bufio.NewScanner(fHandle)
+	for scanner.Scan() {
+		rw.Write(scanner.Bytes())
+		rw.WriteString("\n")
+		err = rw.Flush()
 	}
-	err = rw.Flush()
 	// TODO: wait for the stream to finish writing instead of hardcodindg magic numbers
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 1)
 	if err == nil {
-		log.Println("File sent")
+		log.Printf("File %s sent\n", file)
 	} else {
-		log.Fatalln("falied to write file contenct to peer stream", err.Error())
+		log.Printf("falied to write %s contenct to peer stream\n", file)
 	}
 }
 

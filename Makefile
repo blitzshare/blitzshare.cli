@@ -12,8 +12,8 @@ test:
 	ENV=test && go test --tags='test' -v ./... -v -count=1
 
 fix-format:
-	gofmt -w -s app/ pkg/ cmd/ mocks/ testhelpers
-	goimports -w app/ pkg/ cmd/ mocks/ testhelpers
+	gofmt -w -s app/ cmd/ mocks/
+	goimports -w app/ cmd/ mocks/
 
 start:
 	go run cmd/main.go --start
