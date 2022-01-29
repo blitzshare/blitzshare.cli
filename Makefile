@@ -8,7 +8,7 @@ install:
 	go install $(shell go list -f '{{join .Imports " "}}' tools.go)
 	go mod vendor
 test:
-	go test -v ./app/... -v -count=1 -cover -coverprofile=coverage.out
+	go test  --tags='test' -v ./app/... -v -count=1 -cover -coverprofile=coverage.out
 html-coverage-report:
 	go tool cover -html=coverage.out	
 fix-format:
