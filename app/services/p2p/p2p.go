@@ -46,7 +46,7 @@ func getProtocol(otp *string) protocol.ID {
 func (impl *P2pImp) StartPeer(conf *config.AppConfig, otp *string, handler func(s network.Stream)) string {
 	impl.host = impl.ConnectToBootsrapNode(conf)
 	(*impl.host).SetStreamHandler(getProtocol(otp), handler)
-	multiAddr := fmt.Sprintf("/ip4/%s/tcp/%v/p2p/%s \n", conf.LocalP2pPeerIp, GetPort(*impl.host), (*impl.host).ID().Pretty())
+	multiAddr := fmt.Sprintf("/ip4/%s/tcp/%v/p2p/%s", conf.LocalP2pPeerIp, GetPort(*impl.host), (*impl.host).ID().Pretty())
 	return multiAddr
 }
 
