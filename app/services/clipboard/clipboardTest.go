@@ -1,9 +1,7 @@
-//go:build !test
-// +build !test
+//go:build test
+// +build test
 
 package clipboard
-
-import "golang.design/x/clipboard"
 
 type ClipBoard interface {
 	CopyToClipBoard(s *string)
@@ -17,5 +15,5 @@ func NewClipBoard() ClipBoard {
 }
 
 func (*ClipBoardImpl) CopyToClipBoard(s *string) {
-	clipboard.Write(clipboard.FmtText, []byte(*s))
+	// Do nothing in test build
 }

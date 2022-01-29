@@ -68,7 +68,7 @@ func StartPeer(dep *dependencies.Dependencies) *OTP {
 func SendFileToStream(file string, rw *bufio.ReadWriter) {
 	content, err := ioutil.ReadFile(file)
 	if err != nil {
-		log.Fatalln("file %s cannot be read", file)
+		log.Fatalln("file cannot be read", file)
 	}
 	_, err = rw.Write(content)
 	if err != nil {
@@ -103,7 +103,7 @@ func StartPeerFs(dep *dependencies.Dependencies, file string) *OTP {
 func SaveStreamToFile(rw *bufio.ReadWriter, otp *string) {
 	bytes, err := ioutil.ReadAll(rw)
 	if err == nil {
-		log.Fatalln("faield to receive file from peer stream")
+		log.Fatalln("falied to receive file from peer stream")
 	} else {
 		fileName := fmt.Sprintf("blitzshare-%s.txt", *otp)
 		if err := os.WriteFile(fileName, bytes, 0666); err != nil {
