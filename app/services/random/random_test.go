@@ -1,8 +1,9 @@
 package random_test
 
 import (
-	"bootstrap.cli/app/services/random"
 	"testing"
+
+	"bootstrap.cli/app/services/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"

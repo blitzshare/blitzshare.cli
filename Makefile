@@ -9,7 +9,7 @@ install:
 	go mod vendor
 test:
 	go test  --tags='test' -v ./app/... -v -count=1 -cover -coverprofile=coverage.out
-html-coverage-report:
+coverage-report-html:
 	go tool cover -html=coverage.out	
 fix-format:
 	gofmt -w -s app/ pkg/ cmd/ mocks/ testhelpers
