@@ -23,4 +23,4 @@ start-connect:
 build-mocks:
 	mockery --all --dir "./app/"
 build:
-	go build ./cmd/main.go
+	go build  -o ./blitz ./cmd/main.go

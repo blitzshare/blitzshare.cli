@@ -6,9 +6,40 @@
 Blitzshare API client and P2p peer in libp2p network.
 
 [api](https://github.com/blitzshare/blitzshare.api)
+
 [bootstrap node](https://github.com/blitzshare/blitzshare.bootstrap.node)
 
-## Libraries used
+# Build executable
+```bash
+make build
+```
+
+# Usage
+
+## P2p chat connection
+```bash
+# start init peer
+$ blitz --start
+```
+Send OTP to connecting peer
+```
+$ blitz  --connect
+```
+
+## P2p file share
+
+```bash
+# start init peer
+$ blitz --start --file <Local FILE PATH>
+```
+Send OTP to connecting peer
+```
+$ blitz  --connect
+```
+Notice local file created with `blitzshare-<OTP>.txt` name format
+ 
+
+## Tools & Libraries used
 [libp2p](https://docs.ipfs.io/concepts/libp2p/)
 
 [websequencediagrams](./websequencediagrams)
