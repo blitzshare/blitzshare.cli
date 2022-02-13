@@ -3,7 +3,6 @@ package app
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"strings"
 
 	"os"
@@ -28,7 +27,6 @@ func StartPeer(dep *dependencies.Dependencies) *OTP {
 			dep.BlitzshareApi.DeregisterAsPeer(otp, token)
 		})
 		go stream.ReadStreamToStdIo(rw)
-
 	})
 	token = dep.BlitzshareApi.RegisterAsPeer(&multiAddr, otp, &mode)
 	dep.ClipBoard.CopyToClipBoard(otp)
@@ -51,18 +49,6 @@ func StartPeerFs(dep *dependencies.Dependencies, file string) *OTP {
 	return otp
 }
 
-func SaveStreamToFile(rw *bufio.ReadWriter, otp *string) {
-	bytes, err := ioutil.ReadAll(rw)
-	if err == nil {
-		log.Fatalln("falied to receive file from peer stream")
-	} else {
-		fileName := fmt.Sprintf("blitzshare-%s.txt", *otp)
-		if err := os.WriteFile(fileName, bytes, 0666); err != nil {
-			log.Fatal(err)
-		}
-		log.Printf("file saved as %s", fileName)
-	}
-}
 func ConnectToPeerOTP(dep *dependencies.Dependencies, otp *string) *blitzshare.P2pPeerRegistryResponse {
 	config := dep.BlitzshareApi.GetPeerConfig(otp)
 	log.Printf("Connect to peer OTP: %s, mode: %s", *otp, config.Mode)
@@ -79,7 +65,12 @@ func ConnectToPeerOTP(dep *dependencies.Dependencies, otp *string) *blitzshare.P
 		go stream.WriteStreamFromStdin(rw, nil)
 		go stream.ReadStreamToStdIo(rw)
 	} else {
-		SaveStreamToFile(rw, otp)
+		fileName := fmt.Sprintf("blitzshare-%s.txt", *otp)
+		err := stream.SaveStreamToFile(rw, &fileName)
+		if err != nil {
+			log.Fatalln("error writing to file", fileName, err)
+		}
+		log.Println("[Success] Peer data written to", fileName)
 		ExitProc()
 	}
 	return config
