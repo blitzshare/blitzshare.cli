@@ -19,10 +19,10 @@ type Dependencies struct {
 func NewDependencies(config *cfg.AppConfig) (*Dependencies, error) {
 	return &Dependencies{
 			Config:        config,
-			BlitzshareApi: blitzshare.NewBlitzsahreApi(config),
-			P2p:           p2p.NewP2p(),
-			Rnd:           rnd.NewRnd(),
-			ClipBoard:     clipboard.NewClipBoard(),
+			BlitzshareApi: blitzshare.New(config),
+			P2p:           p2p.New(),
+			Rnd:           rnd.New(),
+			ClipBoard:     clipboard.New(),
 		},
 		nil
 }

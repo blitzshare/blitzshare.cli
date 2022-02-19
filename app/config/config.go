@@ -7,6 +7,7 @@ type AppConfig struct {
 	P2pBoostrapNodeId   string `envconfig:"P2P_BOOTSTRAP_NODE_ID"`
 	P2pBoostrapNodePort int    `envconfig:"PORT" default:"63785"`
 	BlitzshareApiUrl    string `envconfig:"BLITZSHARE_API_URL"`
+	BlitzshareApiKey    string `envconfig:"API_KEY"`
 	LocalP2pPeerIp      string
 }
 

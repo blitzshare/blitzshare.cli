@@ -41,16 +41,21 @@ type BlitzshareApi interface {
 
 type BlitzshareApiImpl struct {
 	BaseUrl string
+	ApiKey  string
 }
 
-func NewBlitzsahreApi(config *cfg.AppConfig) BlitzshareApi {
-	return &BlitzshareApiImpl{BaseUrl: config.BlitzshareApiUrl}
+func New(config *cfg.AppConfig) BlitzshareApi {
+	return &BlitzshareApiImpl{
+		BaseUrl: config.BlitzshareApiUrl,
+		ApiKey:  config.BlitzshareApiKey,
+	}
 }
 
 func (impl *BlitzshareApiImpl) DeregisterAsPeer(otp, token *string) bool {
 	url := fmt.Sprintf("%s/p2p/registry/%s/%s", impl.BaseUrl, *otp, *token)
 	client := &http.Client{}
 	req, _ := http.NewRequest("DELETE", url, nil)
+	req.Header.Add("x-api-key", impl.ApiKey)
 	response, err := client.Do(req)
 	if err != nil {
 		log.Fatalln(err.Error())
@@ -62,15 +67,18 @@ func (impl *BlitzshareApiImpl) DeregisterAsPeer(otp, token *string) bool {
 
 func (impl *BlitzshareApiImpl) RegisterAsPeer(multiAddr *string, otp, mode *string) *string {
 	var token *string = nil
+	client := &http.Client{}
 	payload, _ := json.Marshal(map[string]string{
 		"multiAddr": *multiAddr,
 		"otp":       *otp,
 		"mode":      *mode,
 	})
 	url := fmt.Sprintf("%s/p2p/registry", impl.BaseUrl)
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(payload))
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
+	req.Header.Add("x-api-key", impl.ApiKey)
+	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln(err.Error())
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusAccepted {
@@ -88,10 +96,13 @@ func (impl *BlitzshareApiImpl) RegisterAsPeer(multiAddr *string, otp, mode *stri
 
 func (impl *BlitzshareApiImpl) GetPeerConfig(oneTimePass *string) *P2pPeerRegistryResponse {
 	var result *P2pPeerRegistryResponse = nil
+	client := &http.Client{}
 	url := fmt.Sprintf("%s/p2p/registry/%s", impl.BaseUrl, *oneTimePass)
-	resp, err := http.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Add("x-api-key", impl.ApiKey)
+	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err.Error())
 	}
 	if resp.StatusCode == http.StatusOK {
 		body, _ := ioutil.ReadAll(resp.Body)
@@ -108,8 +119,11 @@ func (impl *BlitzshareApiImpl) GetPeerConfig(oneTimePass *string) *P2pPeerRegist
 
 func (impl *BlitzshareApiImpl) GetBootstrapNode() *NodeConfigRespone {
 	var result *NodeConfigRespone = nil
+	client := &http.Client{}
 	url := fmt.Sprintf("%s/p2p/bootstrap-node", impl.BaseUrl)
-	resp, err := http.Get(url)
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Add("x-api-key", impl.ApiKey)
+	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
 	}

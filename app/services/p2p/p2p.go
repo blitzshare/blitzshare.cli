@@ -30,7 +30,7 @@ type P2pImp struct {
 	host *host.Host
 }
 
-func NewP2p() P2p {
+func New() P2p {
 	return &P2pImp{}
 }
 

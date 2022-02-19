@@ -14,7 +14,7 @@ type Rnd interface {
 	GenerateRandomWordSequence() *string
 }
 
-func NewRnd() Rnd {
+func New() Rnd {
 	return &RndImpl{}
 }
 

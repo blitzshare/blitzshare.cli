@@ -32,7 +32,7 @@ var _ = Describe("test blitzshare api module", func() {
 			BlitzshareApiUrl:    "http://test.host",
 			LocalP2pPeerIp:      "",
 		}
-		api = blitzshare.NewBlitzsahreApi(&mockedConfig)
+		api = blitzshare.New(&mockedConfig)
 		httpmock.Activate()
 	})
 	Context("GetBootstrapNode Tests", func() {
