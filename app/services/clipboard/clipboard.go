@@ -12,7 +12,7 @@ type ClipBoard interface {
 type ClipBoardImpl struct {
 }
 
-func NewClipBoard() ClipBoard {
+func New() ClipBoard {
 	return &ClipBoardImpl{}
 }
 

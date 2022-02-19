@@ -17,7 +17,7 @@ func TestRandomService(t *testing.T) {
 var _ = Describe("test random module", func() {
 	var rnd random.Rnd
 	BeforeSuite(func() {
-		rnd = random.NewRnd()
+		rnd = random.New()
 	})
 	Context("given random instance", func() {
 		It("expected to generate random word sequence", func() {
